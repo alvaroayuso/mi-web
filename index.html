@@ -11,41 +11,130 @@
     :root {
       --bg: #0B0B0B;
       --fg: #ECE9E1;
+      --fg-muted: rgba(236, 233, 225, 0.66);
       --fg-faint: rgba(236, 233, 225, 0.40);
+      --hairline: rgba(236, 233, 225, 0.14);
       --font: "Hanken Grotesk", system-ui, sans-serif;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--fg);
       font-family: var(--font);
       -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* Navegación fija arriba */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      gap: 2rem;
+      justify-content: flex-end;
+      padding: 1.5rem 2rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      mix-blend-mode: difference;
+      z-index: 10;
+    }
+    nav a {
+      color: var(--fg);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+    nav a:hover { opacity: 1; }
+
+    /* Hero a pantalla completa */
+    .hero {
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      justify-content: center;
       padding: 2rem;
     }
-    .hero { max-width: 900px; }
     .hero h1 {
       font-weight: 300;
       font-size: clamp(3rem, 9vw, 7rem);
       letter-spacing: -0.02em;
       line-height: 1;
     }
-    .hero p {
+    .hero .role {
       margin-top: 1.5rem;
-      font-weight: 400;
       font-size: 0.82rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--fg-faint);
     }
+    .hero .scroll-cue {
+      margin-top: auto;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-faint);
+    }
+
+    /* Secciones de contenido */
+    section {
+      padding: clamp(5rem, 12vh, 9rem) 2rem;
+      max-width: 820px;
+    }
+    section h2 {
+      font-weight: 400;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-faint);
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--hairline);
+    }
+    section p { color: var(--fg-muted); max-width: 60ch; }
+    footer {
+      padding: 3rem 2rem;
+      font-size: 0.78rem;
+      color: var(--fg-faint);
+      border-top: 1px solid var(--hairline);
+    }
   </style>
 </head>
 <body>
-  <main class="hero">
+  <nav>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#agenda">Agenda</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <header class="hero">
     <h1>Álvaro Ayuso</h1>
-    <p>Percusión · Electrónica · Instalación</p>
-  </main>
+    <div class="role">Percusión · Electrónica · Instalación</div>
+    <div class="scroll-cue">↓ Scroll</div>
+  </header>
+
+  <section id="work">
+    <h2>Work</h2>
+    <p>Aquí irán los proyectos: Saint Leo, El silencio de Valvanera, Marianito Rojo, Páramo 26005. (Texto provisional.)</p>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>Aquí irá la bio. (Texto provisional.)</p>
+  </section>
+
+  <section id="agenda">
+    <h2>Agenda</h2>
+    <p>Aquí irá la lista de conciertos. (Texto provisional.)</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Aquí irán email y enlaces. (Texto provisional.)</p>
+  </section>
+
+  <footer>© 2026 Álvaro Ayuso</footer>
 </body>
 </html>
