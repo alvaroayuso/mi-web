@@ -4,8 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Álvaro Ayuso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0B0B;
+      --fg: #ECE9E1;
+      --fg-faint: rgba(236, 233, 225, 0.40);
+      --font: "Hanken Grotesk", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 2rem;
+    }
+    .hero { max-width: 900px; }
+    .hero h1 {
+      font-weight: 300;
+      font-size: clamp(3rem, 9vw, 7rem);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .hero p {
+      margin-top: 1.5rem;
+      font-weight: 400;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-faint);
+    }
+  </style>
 </head>
 <body>
-  <h1>Álvaro Ayuso</h1>
+  <main class="hero">
+    <h1>Álvaro Ayuso</h1>
+    <p>Percusión · Electrónica · Instalación</p>
+  </main>
 </body>
 </html>
