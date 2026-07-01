@@ -191,11 +191,8 @@
   <div class="cursor-dot" id="cursor-dot"></div>
   <div class="cursor-ring" id="cursor-ring"></div>
 
-  <video class="bg-video" id="bg-default" autoplay muted loop playsinline poster="images/solo-1.jpg">
+  <video class="bg-video" autoplay muted loop playsinline poster="images/solo-1.jpg">
     <source src="video/parawebvideo-web.mp4" type="video/mp4">
-  </video>
-  <video class="bg-video" id="bg-work" autoplay muted loop playsinline style="opacity:0;transition:opacity 0.8s ease;">
-    <source src="video/work-bg.mp4" type="video/mp4">
   </video>
   <div class="bg-overlay"></div>
 
@@ -428,22 +425,11 @@
     const pages = document.querySelectorAll('.page');
     const navLinks = document.querySelectorAll('[data-page]');
 
-    const bgDefault = document.getElementById('bg-default');
-    const bgWork = document.getElementById('bg-work');
-
     function showPage(id) {
       pages.forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + id).classList.add('active');
       window.scrollTo({ top: 0 });
       navLinks.forEach(a => a.classList.toggle('current', a.dataset.page === id));
-      // swap background video
-      if (id === 'agenda') {
-        bgDefault.style.opacity = '0';
-        bgWork.style.opacity = '1';
-      } else {
-        bgDefault.style.opacity = '1';
-        bgWork.style.opacity = '0';
-      }
       initReveals();
     }
 
