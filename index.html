@@ -123,6 +123,19 @@
     .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: none; }
 
+    /* ── Mobile nav ── */
+    @media (max-width: 600px) {
+      nav { flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.2rem 1.5rem; }
+      .nav-name { display: none; }
+      .nav-links { gap: 1.2rem; font-size: 0.72rem; }
+    }
+
+    /* ── Touch devices: disable custom cursor ── */
+    @media (pointer: coarse) {
+      * { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
       .bg-video { display: none; }
