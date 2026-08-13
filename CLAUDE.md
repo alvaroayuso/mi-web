@@ -29,7 +29,7 @@ Idioma actual: **inglés**. Secciones, en orden:
 1. **Hero** — vídeo de fondo en loop + nombre "Álvaro Ayuso" + rol.
 2. **Galería** — fotos en columnas (masonry) que aparecen al hacer scroll.
 3. **Work — Compositions** — Piñas, platos y patches (recital/tesis); Tom Cage; Manta; Hybrid Percussion Set; Soundtrack for Experimental Film; Early Experiments.
-4. **Projects — Collaborations** — Marianito Rojo; Páramo 26005; Duo with Tibor Novak; Joan Guinjoan Prize.
+4. **Projects — Collaborations** — Marianito Rojo; Páramo 26005; Duo with Tibor Kovács; Joan Guinjoan Prize.
 5. **About** — bio en inglés.
 6. **Contact** — email + enlaces (YouTube, Instagram, Bandcamp).
 
@@ -45,10 +45,12 @@ Idioma actual: **inglés**. Secciones, en orden:
 - [ ] Auto-alojar Hanken Grotesk (`.woff2` + `@font-face`) en vez de depender de Google Fonts.
 - [ ] Extraer **color de acento** de un fotograma del vídeo de San Leonardo.
 - [ ] Decidir idioma definitivo (solo ES vs bilingüe ES/EN).
-- [ ] Revisar dato: en la bio pone "Tibor Kovács" y en Projects "Tibor Novak" — confirmar cuál es correcto y unificar.
+- [x] ~~Corregir "Tibor Novak" → "Tibor Kovács"~~ — hecho el 12 ago 2026 en `index.html` y aquí. Apellido correcto confirmado por Álvaro: **Kovács**.
 - [ ] Confirmar el programa real del recital "Piñas, platos y patches" (el texto está redactado a partir de notas; revisar nombres y obras).
 - [ ] (Opcional) Wordmark SVG del nombre.
 - [ ] Comprobar SIEMPRE el sitio en móvil tras cada cambio (responsive, peso del vídeo).
+- [ ] **Cuando caduque el token de GitHub** (el push pedirá usuario/contraseña): NO generar otro token. Decisión de Álvaro (ago 2026): migrar a **claves SSH** y cambiar el remoto de HTTPS a SSH, para no volver a renovar nada nunca. Remoto actual: `https://github.com/alvaroayuso/mi-web.git`.
+- [ ] Dominio en Porkbun: contratado por 3 años. Verificar que el **auto-renew** está activado y que la tarjeta guardada sigue vigente.
 
 ## Flujo de trabajo
 Editar → revisar → `git add .` → `git commit -m "mensaje corto y claro"` → `git push`. Netlify republica en ~1 min. No hace falta autenticación en cada push (guardada en el Llavero).

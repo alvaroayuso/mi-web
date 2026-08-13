@@ -20,24 +20,11 @@
       --font: "Hanken Grotesk", system-ui, sans-serif;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html { background: var(--bg); }
     body { background: transparent; color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.6; }
     a { color: inherit; }
 
-    /* ── Custom cursor ── */
-    .cursor-dot {
-      position: fixed; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--fg); pointer-events: none; z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-    .cursor-ring {
-      position: fixed; width: 32px; height: 32px; border-radius: 50%;
-      border: 1px solid rgba(236,233,225,0.35); pointer-events: none; z-index: 9998;
-      transform: translate(-50%, -50%);
-    }
-    .cursor-dot.hover { transform: translate(-50%,-50%) scale(2.2); opacity: 0.35; }
 
     /* ── Background video (fixed, full page) ── */
     .bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.8s ease; }
@@ -76,12 +63,27 @@
     }
 
     /* ── Gallery ── */
-    .gallery-sec { padding: clamp(4rem, 10vh, 7rem) 2rem; }
+    .gallery-sec { padding: clamp(1.8rem, 4vh, 2.8rem) 2rem clamp(4rem, 10vh, 7rem); }
     .gallery { column-count: 3; column-gap: 1rem; }
     @media (max-width: 900px) { .gallery { column-count: 2; } }
     @media (max-width: 560px) { .gallery { column-count: 1; } }
-    .gallery figure { break-inside: avoid; margin: 0 0 1rem; }
+    .gallery figure { break-inside: avoid; margin: 0 0 1rem; position: relative; }
     .gallery img { width: 100%; height: auto; display: block; }
+    .gallery figcaption {
+      font-size: 0.74rem; letter-spacing: 0.04em; line-height: 1.45;
+      color: var(--fg-faint); margin-top: 0.55rem;
+    }
+    /* En escritorio (con ratón) el pie se superpone y solo aparece al pasar el cursor */
+    @media (hover: hover) and (pointer: fine) {
+      .gallery figcaption {
+        position: absolute; left: 0; right: 0; bottom: 0; margin: 0;
+        padding: 2.4rem 1rem 0.9rem;
+        color: var(--fg);
+        background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0));
+        opacity: 0; transition: opacity 0.35s ease;
+      }
+      .gallery figure.has-caption:hover figcaption { opacity: 1; }
+    }
 
     /* ── Sections ── */
     .content-section { padding: clamp(5rem, 12vh, 9rem) 2rem; }
@@ -164,6 +166,111 @@
       .agenda-what h3 { font-size: 1.35rem; }
     }
 
+    /* ── Selector de idioma ── */
+    .lang-switch {
+      background: none; border: none; font-family: inherit;
+      font-size: 0.78rem; letter-spacing: 0.08em; color: var(--fg);
+      padding: 0; margin-left: 0.6rem; display: inline-flex; gap: 0.35rem;
+    }
+    .lang-switch span { opacity: 0.4; transition: opacity 0.3s ease; }
+    .lang-switch .sep { opacity: 0.25; }
+    .lang-switch span[data-lang-opt].on { opacity: 1; }
+    .lang-switch:hover span[data-lang-opt]:not(.on) { opacity: 0.7; }
+
+    /* ── Vídeo con carga diferida (lite embed) ── */
+    .lite {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+      background: #000 center/cover no-repeat; border: none; padding-top: 0;
+      display: block; overflow: hidden; cursor: pointer;
+    }
+    .lite::after {
+      content: ""; position: absolute; inset: 0;
+      background: rgba(0,0,0,0.28); transition: background 0.35s ease;
+    }
+    .lite:hover::after { background: rgba(0,0,0,0.10); }
+    .lite .play {
+      position: absolute; z-index: 2; left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      width: 74px; height: 74px; border-radius: 50%;
+      border: 1px solid rgba(236,233,225,0.55);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.35s ease, transform 0.35s ease;
+    }
+    .lite .play::before {
+      content: ""; border-left: 13px solid var(--fg);
+      border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+      margin-left: 4px;
+    }
+    .lite:hover .play { border-color: var(--fg); transform: translate(-50%,-50%) scale(1.06); }
+    .lite iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 3; }
+
+    /* ── Hero teaser ── */
+    .teaser-sec { padding: clamp(4rem, 11vh, 7rem) 2rem 0; }
+    .hero-teaser { max-width: 1180px; margin: 0 auto; }
+
+    /* ── Media ── */
+    .section-label--next { margin-top: clamp(4rem, 9vh, 6.5rem); }
+    .media-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2.2rem 1.6rem;
+    }
+    @media (max-width: 980px) { .media-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px)  { .media-grid { grid-template-columns: 1fr; } }
+    .media-item .media-title { margin-top: 0.75rem; color: var(--fg-muted); font-size: 0.9rem; line-height: 1.4; }
+    .media-item .media-meta { color: var(--fg-faint); font-size: 0.74rem; letter-spacing: 0.04em; margin-top: 0.25rem; }
+    .media-grid .lite .play { width: 52px; height: 52px; }
+    .media-grid .lite .play::before { border-left-width: 10px; border-top-width: 6px; border-bottom-width: 6px; }
+
+    /* ── Fichas (prensa y descargas) ── */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem; max-width: 820px;
+    }
+    @media (max-width: 620px) { .card-grid { grid-template-columns: 1fr; } }
+    .card {
+      display: flex; flex-direction: column; justify-content: flex-end;
+      min-height: 165px; padding: 1.4rem;
+      border: 1px solid var(--hairline); text-decoration: none;
+      background: rgba(236,233,225,0.05);
+      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      transition: border-color 0.35s ease, background 0.35s ease;
+    }
+    .card:hover { border-color: var(--fg-muted); background: rgba(236,233,225,0.09); }
+    .card-kind {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--fg-faint); margin-bottom: auto;
+    }
+    .card-title { color: var(--fg); font-size: 1.05rem; line-height: 1.3; }
+    .card-meta { color: var(--fg-faint); font-size: 0.74rem; letter-spacing: 0.04em; margin-top: 0.4rem; }
+
+    /* ── Bio ── */
+    .bio-layout {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
+      gap: clamp(2rem, 5vw, 4.5rem); align-items: start;
+    }
+    .bio-photo img { width: 100%; height: auto; display: block; }
+    .bio-photo figcaption {
+      margin-top: 0.7rem; font-size: 0.7rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--fg-faint);
+    }
+    .bio-body p { color: var(--fg-muted); margin-bottom: 1.2rem; }
+    .bio-body .bio-long { display: none; }
+    .bio-body.long-open .bio-long { display: block; }
+    .bio-body.long-open .bio-short { display: none; }
+    .bio-toggle {
+      display: block; width: 100%; text-align: left;
+      background: none; border: none; border-top: 1px solid var(--hairline);
+      font-family: inherit; font-size: 0.78rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--fg-faint);
+      padding: 1rem 0 0; margin-top: 1.4rem;
+      transition: color 0.3s ease;
+    }
+    .bio-toggle:hover { color: var(--fg); }
+    @media (max-width: 760px) {
+      .bio-layout { grid-template-columns: 1fr; }
+      .bio-photo { max-width: 300px; order: -1; }
+    }
+
     /* ── Mobile nav ── */
     @media (max-width: 600px) {
       nav { flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.2rem 1.5rem; }
@@ -171,39 +278,34 @@
       .nav-links { gap: 1.2rem; font-size: 0.72rem; }
     }
 
-    /* ── Touch devices: disable custom cursor ── */
-    @media (pointer: coarse) {
-      * { cursor: auto; }
-      .cursor-dot, .cursor-ring { display: none; }
+    @media (max-width: 900px) {
+      .bg-video { display: none; }
+      .bg-overlay { background: var(--bg); }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
       .bg-video { display: none; }
       .page.active { animation: none; }
-      * { cursor: auto; }
-      .cursor-dot, .cursor-ring { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <div class="cursor-dot" id="cursor-dot"></div>
-  <div class="cursor-ring" id="cursor-ring"></div>
-
-  <video class="bg-video" autoplay muted loop playsinline poster="images/solo-1.jpg">
-    <source src="video/parawebvideo-web.mp4" type="video/mp4">
-  </video>
+  <video class="bg-video" id="bg-video" autoplay muted loop playsinline
+         preload="none" poster="images/poster.webp" data-src="video/parawebvideo-web.mp4"></video>
   <div class="bg-overlay"></div>
 
   <nav>
     <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
     <div class="nav-links">
-      <a href="#" data-page="work">Work</a>
-      <a href="#" data-page="projects">Projects</a>
-      <a href="#" data-page="agenda">Agenda</a>
-      <a href="#" data-page="about">About</a>
-      <a href="#" data-page="contact">Contact</a>
+      <a href="#" data-page="work" data-i18n="nav.work">Work</a>
+      <a href="#" data-page="projects" data-i18n="nav.projects">Projects</a>
+      <a href="#" data-page="agenda" data-i18n="nav.agenda">Agenda</a>
+      <a href="#" data-page="bio">Bio</a>
+      <a href="#" data-page="media" data-i18n="nav.media">Media</a>
+      <a href="#" data-page="contact" data-i18n="nav.contact">Contact</a>
+      <button class="lang-switch" id="lang-switch" type="button" aria-label="Cambiar idioma"><span data-lang-opt="en">EN</span><span class="sep">/</span><span data-lang-opt="es">ES</span></button>
     </div>
   </nav>
 
@@ -211,33 +313,69 @@
   <div class="page active" id="page-home">
     <header class="hero">
       <h1>Álvaro Ayuso</h1>
-      <div class="role">Percussion · Live Electronics · Sound Art</div>
+      <div class="role" data-i18n="hero.role">Percussion · Live Electronics · Sound Art</div>
     </header>
+    <section class="teaser-sec">
+      <div class="hero-teaser">
+        <div class="lite" data-id="pK7y1Gb-qUY" role="button" tabindex="0"
+             aria-label="Play trailer" style="background-image:url('https://i.ytimg.com/vi/pK7y1Gb-qUY/maxresdefault.jpg')">
+          <span class="play"></span>
+        </div>
+      </div>
+    </section>
     <div class="gallery-sec">
       <div class="gallery">
-        <figure class="reveal"><img src="images/solo-1.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/marianito-1.jpg" loading="lazy" alt="Marianito Rojo"></figure>
-        <figure class="reveal"><img src="images/Feller-1.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/solo-2.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/recurso-1.jpg" loading="lazy" alt="Set detail"></figure>
-        <figure class="reveal"><img src="images/Feller-2.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/marianito-2.jpg" loading="lazy" alt="Marianito Rojo"></figure>
-        <figure class="reveal"><img src="images/solo-3.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/Feller-3.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/recurso-2.jpg" loading="lazy" alt="Set detail"></figure>
-        <figure class="reveal"><img src="images/solo-4.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/marianito-3.jpg" loading="lazy" alt="Marianito Rojo"></figure>
-        <figure class="reveal"><img src="images/Feller-4.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/solo-5.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/recurso-3.jpg" loading="lazy" alt="Set detail"></figure>
-        <figure class="reveal"><img src="images/Feller-5.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/marianito-4.jpg" loading="lazy" alt="Marianito Rojo"></figure>
-        <figure class="reveal"><img src="images/solo-6.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/Feller-6.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/recurso-4.jpg" loading="lazy" alt="Set detail"></figure>
-        <figure class="reveal"><img src="images/solo-7.jpg" loading="lazy" alt="Álvaro Ayuso"></figure>
-        <figure class="reveal"><img src="images/marianito-5.jpg" loading="lazy" alt="Marianito Rojo"></figure>
-        <figure class="reveal"><img src="images/recurso-5.jpg" loading="lazy" alt="Set detail"></figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.garyberger">
+          <img src="images/garyberger.webp" srcset="images/garyberger-480.webp 480w, images/garyberger-900.webp 900w, images/garyberger.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Gary Berger, 31 mal lösen · Piñas, platos y patches">
+          <figcaption>Gary Berger, 31 mal lösen · Piñas, platos y patches</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.marianito-1">
+          <img src="images/marianito-1.webp" srcset="images/marianito-1-480.webp 480w, images/marianito-1-900.webp 900w, images/marianito-1.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Marianito Rojo at the Troubadour, London">
+          <figcaption>Marianito Rojo at the Troubadour, London</figcaption>
+        </figure>
+        <figure class="reveal"><img src="images/Feller-2.webp" srcset="images/Feller-2-480.webp 480w, images/Feller-2-900.webp 900w, images/Feller-2.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt=""></figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.saintleo">
+          <img src="images/saintleo.webp" srcset="images/saintleo-480.webp 480w, images/saintleo-900.webp 900w, images/saintleo.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="SaintLeo · Piñas, platos y patches">
+          <figcaption>SaintLeo · Piñas, platos y patches</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.solo-5">
+          <img src="images/solo-5.webp" srcset="images/solo-5-480.webp 480w, images/solo-5-900.webp 900w, images/solo-5.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Naturstudium, residency with Luis Tabuenca, Fabra i Coats, Barcelona">
+          <figcaption>Naturstudium, residency with Luis Tabuenca, Fabra i Coats, Barcelona</figcaption>
+        </figure>
+        <figure class="reveal"><img src="images/Feller-3.webp" srcset="images/Feller-3-480.webp 480w, images/Feller-3-900.webp 900w, images/Feller-3.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt=""></figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.so-primari">
+          <img src="images/so-primari.webp" srcset="images/so-primari-480.webp 480w, images/so-primari-900.webp 900w, images/so-primari.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="María Amor, So primari · Piñas, platos y patches">
+          <figcaption>María Amor, So primari · Piñas, platos y patches</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.marianito-2">
+          <img src="images/marianito-2.webp" srcset="images/marianito-2-480.webp 480w, images/marianito-2-900.webp 900w, images/marianito-2.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Marianito Rojo at the Troubadour, London">
+          <figcaption>Marianito Rojo at the Troubadour, London</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.Feller-4">
+          <img src="images/Feller-4.webp" srcset="images/Feller-4-480.webp 480w, images/Feller-4-900.webp 900w, images/Feller-4.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Cort Lippe, Duo for Cajón and Computer">
+          <figcaption>Cort Lippe, Duo for Cajón and Computer</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.shlomowitz">
+          <img src="images/shlomowitz.webp" srcset="images/shlomowitz-480.webp 480w, images/shlomowitz-900.webp 900w, images/shlomowitz.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Matthew Shlomowitz, Popular Contexts 8">
+          <figcaption>Matthew Shlomowitz, Popular Contexts 8</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.solo-7">
+          <img src="images/solo-7.webp" srcset="images/solo-7-480.webp 480w, images/solo-7-900.webp 900w, images/solo-7.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Entre pulsos y paisajes at La Lonja, Logroño">
+          <figcaption>Entre pulsos y paisajes at La Lonja, Logroño</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.marianito-3">
+          <img src="images/marianito-3.webp" srcset="images/marianito-3-480.webp 480w, images/marianito-3-900.webp 900w, images/marianito-3.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Marianito Rojo at the Troubadour, London">
+          <figcaption>Marianito Rojo at the Troubadour, London</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.Feller-5">
+          <img src="images/Feller-5.webp" srcset="images/Feller-5-480.webp 480w, images/Feller-5-900.webp 900w, images/Feller-5.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Tom Cage">
+          <figcaption>Tom Cage</figcaption>
+        </figure>
+        <figure class="reveal has-caption" data-i18n-cap="cap.marianito-5">
+          <img src="images/marianito-5.webp" srcset="images/marianito-5-480.webp 480w, images/marianito-5-900.webp 900w, images/marianito-5.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt="Marianito Rojo at the Troubadour, London">
+          <figcaption>Marianito Rojo at the Troubadour, London</figcaption>
+        </figure>
+        <figure class="reveal"><img src="images/Feller-6.webp" srcset="images/Feller-6-480.webp 480w, images/Feller-6-900.webp 900w, images/Feller-6.webp 1800w" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" loading="lazy" alt=""></figure>
       </div>
     </div>
   </div>
@@ -245,12 +383,12 @@
   <!-- ── WORK ── -->
   <div class="page" id="page-work">
     <div class="content-section">
-      <div class="section-label">Work — Compositions</div>
+      <div class="section-label" data-i18n="label.work">Work — Compositions</div>
       <div class="projects">
 
         <div class="project reveal">
-          <h3>Early Experiments</h3>
-          <p>Coming from a classical percussion background, my first explorations with electronics emerged through tape in relation to existing repertoire: a tape for Elliott Carter's <em>Figment V</em> reinforcing its rhythmic modulations, and a layered version of Bach's Sarabande and its Double from the lute suite, where both textures interact (from 1:46).</p>
+          <h3 data-i18n="w1.h">Early Experiments</h3>
+          <p data-i18n="w1.p">Coming from a classical percussion background, my first explorations with electronics emerged through tape in relation to existing repertoire: a tape for Elliott Carter's <em>Figment V</em> reinforcing its rhythmic modulations, and a layered version of Bach's Sarabande and its Double from the lute suite, where both textures interact (from 1:46).</p>
           <div class="video-grid">
             <div>
               <div class="video-wrap"><iframe src="https://www.youtube.com/embed/WFY744ehMjY" allowfullscreen loading="lazy" title="Elliott Carter – Figment V, tape version"></iframe></div>
@@ -264,26 +402,26 @@
         </div>
 
         <div class="project reveal">
-          <h3>Tom Cage</h3>
-          <p>A piece for tom, pedal and MIDI controller inspired by John Cage's ideas of indeterminacy and performer agency. The electronic system introduces controlled unpredictability, allowing the performer to influence the structure and evolution of the piece in real time.</p>
+          <h3 data-i18n="w2.h">Tom Cage</h3>
+          <p data-i18n="w2.p">A piece for tom, pedal and MIDI controller inspired by John Cage's ideas of indeterminacy and performer agency. The electronic system introduces controlled unpredictability, allowing the performer to influence the structure and evolution of the piece in real time.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/hVBeSFSkjwE" allowfullscreen loading="lazy" title="Tom Cage – Percussion and Live Electronics"></iframe></div>
         </div>
 
         <div class="project reveal">
-          <h3>Manta</h3>
-          <p>For vibraphone and electronics, inspired by Stockhausen's <em>Mantra</em> and its use of ring modulation. The idea is translated to the vibraphone, exploring how modulation can transform the instrument's sound and harmonic character.</p>
+          <h3 data-i18n="w3.h">Manta</h3>
+          <p data-i18n="w3.p">For vibraphone and electronics, inspired by Stockhausen's <em>Mantra</em> and its use of ring modulation. The idea is translated to the vibraphone, exploring how modulation can transform the instrument's sound and harmonic character.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/155Bl-2jvdI" allowfullscreen loading="lazy" title="Manta – Vibraphone and Live Electronics"></iframe></div>
         </div>
 
         <div class="project reveal">
-          <h3>Hybrid Percussion Set</h3>
-          <p>A hybrid setup combining percussion and live electronics — percussion instruments, MIDI controllers and custom Max for Live devices interacting through live processing in Ableton. It has become a central tool in my practice, used both for improvisation and across other projects, and I keep expanding it as I learn new tools.</p>
+          <h3 data-i18n="w4.h">Hybrid Percussion Set</h3>
+          <p data-i18n="w4.p">A hybrid setup combining percussion and live electronics — percussion instruments, MIDI controllers and custom Max for Live devices interacting through live processing in Ableton. It has become a central tool in my practice, used both for improvisation and across other projects, and I keep expanding it as I learn new tools.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/-wozCsaUd9M" allowfullscreen loading="lazy" title="Percussion and Live Electronics Improvisation"></iframe></div>
         </div>
 
         <div class="project reveal">
-          <h3>Soundtrack for Experimental Film</h3>
-          <p>Original soundtrack for an experimental documentary by filmmaker Alma Tejada about a cave in La Rioja (Spain). The film explores the textures and atmosphere of the space, focusing on the relationship between landscape, geology and sound; the music was created to accompany its visual rhythm.</p>
+          <h3 data-i18n="w5.h">Soundtrack for Experimental Film</h3>
+          <p data-i18n="w5.p">Original soundtrack for an experimental documentary by filmmaker Alma Tejada about a cave in La Rioja (Spain). The film explores the textures and atmosphere of the space, focusing on the relationship between landscape, geology and sound; the music was created to accompany its visual rhythm.</p>
         </div>
 
       </div>
@@ -293,12 +431,12 @@
   <!-- ── PROJECTS ── -->
   <div class="page" id="page-projects">
     <div class="content-section">
-      <div class="section-label">Projects — Collaborations</div>
+      <div class="section-label" data-i18n="label.projects">Projects — Collaborations</div>
       <div class="projects">
 
         <div class="project reveal">
-          <h3>Marianito Rojo</h3>
-          <p>A duo with trumpet player Carmen Llena focused on experimental performance and improvisation. The project moves between composed material and open forms, letting sound emerge through interaction and listening. Drawing from contemporary music, improvisation and jazz, we use live electronics to expand the acoustic instruments and allow real-time transformations.</p>
+          <h3 data-i18n="p1.h">Marianito Rojo</h3>
+          <p data-i18n="p1.p">A duo with trumpet player Carmen Llena focused on experimental performance and improvisation. The project moves between composed material and open forms, letting sound emerge through interaction and listening. Drawing from contemporary music, improvisation and jazz, we use live electronics to expand the acoustic instruments and allow real-time transformations.</p>
           <div class="video-grid">
             <div>
               <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UKUt65oGjRo" allowfullscreen loading="lazy" title="Marianito Rojo – ELEVATOR IMPRO"></iframe></div>
@@ -313,8 +451,8 @@
         </div>
 
         <div class="project reveal">
-          <h3>Páramo 26005</h3>
-          <p>I am a co-founder of the sound-creation collective Páramo 26005, together with Adrián Fuentes and Juls Ruiz. Within the project I perform as a musician and contribute to the compositional development of the pieces, as well as to the sonic conception of the work and the integration of live electronics.</p>
+          <h3 data-i18n="p2.h">Páramo 26005</h3>
+          <p data-i18n="p2.p">I am a co-founder of the sound-creation collective Páramo 26005, together with Adrián Fuentes and Juls Ruiz. Within the project I perform as a musician and contribute to the compositional development of the pieces, as well as to the sonic conception of the work and the integration of live electronics.</p>
           <div class="video-grid">
             <div>
               <div class="video-wrap"><iframe src="https://www.youtube.com/embed/YxMCWcnsU-4" allowfullscreen loading="lazy" title="Páramo 26005 – Bulería de cactus"></iframe></div>
@@ -329,8 +467,8 @@
         </div>
 
         <div class="project reveal">
-          <h3>Duo with Tibor Novak</h3>
-          <p>A duo focused on free improvisation, working with my hybrid percussion and electronics setup and Tibor's modular synthesis system, generally moving towards slower, atmospheric and drone-oriented sound worlds. We also created <em>SoL</em>, a performance project combining sound, light and distorted visual imagery.</p>
+          <h3 data-i18n="p3.h">Duo with Tibor Kovács</h3>
+          <p data-i18n="p3.p">A duo focused on free improvisation, working with my hybrid percussion and electronics setup and Tibor's modular synthesis system, generally moving towards slower, atmospheric and drone-oriented sound worlds. We also created <em>SoL</em>, a performance project combining sound, light and distorted visual imagery.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/H9Bu3Gw9veA" allowfullscreen loading="lazy" title="SoL Trailer"></iframe></div>
           <div class="video-caption">SoL — trailer</div>
         </div>
@@ -342,17 +480,17 @@
   <!-- ── AGENDA ── -->
   <div class="page" id="page-agenda">
     <div class="content-section">
-      <div class="section-label">Agenda</div>
+      <div class="section-label" data-i18n="label.agenda">Agenda</div>
       <div class="agenda-block">
 
         <div class="agenda-entry reveal">
           <div class="agenda-when">
             <span class="agenda-day">04–05</span>
-            <span class="agenda-monthyear">Jul 2026</span>
+            <span class="agenda-monthyear" data-i18n="ag1.m">Jul 2026</span>
           </div>
           <div class="agenda-what">
-            <h3>Madame Bovary</h3>
-            <div class="agenda-role">Percussion</div>
+            <h3 data-i18n="ag1.h">Madame Bovary</h3>
+            <div class="agenda-role" data-i18n="ag1.r">Percussion</div>
             <div class="agenda-where">Teatre Nacional de Catalunya <span class="city">· Barcelona</span></div>
           </div>
         </div>
@@ -360,11 +498,11 @@
         <div class="agenda-entry reveal">
           <div class="agenda-when">
             <span class="agenda-day">15</span>
-            <span class="agenda-monthyear">Ago 2026</span>
+            <span class="agenda-monthyear" data-i18n="ag2.m">Aug 2026</span>
           </div>
           <div class="agenda-what">
-            <h3>John Cage — <em>Four⁴</em></h3>
-            <div class="agenda-role">Percussion quartet · HKB coproduction</div>
+            <h3 data-i18n="ag2.h">John Cage — <em>Four⁴</em></h3>
+            <div class="agenda-role" data-i18n="ag2.r">Percussion quartet · HKB coproduction</div>
             <div class="agenda-where">Les Jardins Musicaux, Antenne de Chasseral <span class="city">· Chasseral</span></div>
           </div>
         </div>
@@ -372,11 +510,11 @@
         <div class="agenda-entry reveal">
           <div class="agenda-when">
             <span class="agenda-day">20</span>
-            <span class="agenda-monthyear">Nov 2026</span>
+            <span class="agenda-monthyear" data-i18n="ag3.m">Nov 2026</span>
           </div>
           <div class="agenda-what">
-            <h3>El silencio de Valvanera</h3>
-            <div class="agenda-role">Beca Inicia</div>
+            <h3 data-i18n="ag3.h">El silencio de Valvanera</h3>
+            <div class="agenda-role" data-i18n="ag3.r">Beca Inicia</div>
             <div class="agenda-where">La Gota de Leche <span class="city">· Logroño</span></div>
           </div>
         </div>
@@ -385,28 +523,110 @@
     </div>
   </div>
 
-  <!-- ── ABOUT ── -->
-  <div class="page" id="page-about">
+  <!-- ── BIO ── -->
+  <div class="page" id="page-bio">
     <div class="content-section">
-      <div class="section-label">About</div>
-      <div class="text-block reveal">
-        <p>Álvaro Ayuso (Logroño, 2000) is a percussionist and composer based in Bern, Switzerland. He builds pieces for acoustic percussion, live electronics and sound installation, working mainly with Max/MSP, Ableton Live and Arduino, treating patches and circuits as instruments in their own right alongside skins and metal. He is drawn to duration and repetition: what happens when a single gesture is held, looped or left to decay, rather than pushed forward or developed.</p>
-        <p>He has premiered works by composers including Yido Chae (<em>Possessed</em>, À suivre, Bern, 2026), Altin Volaj (<em>Echoes of the Past</em>, for percussion trio, 2026), Tibor Kovács, María Amor and Lluís Pérez Villegas.</p>
-        <p>He completed a Master in Percussion Performance at the Hochschule der Künste Bern (HKB) under Brian Archinal, and is now pursuing a second Master's in Contemporary Arts Practice, specialising in Sound Arts, at HKB's Y Institut. He studied percussion at ESMUC, Barcelona, under Lorenzo Ferrándiz, Marc Aixà and Miquel Bernat, following earlier training at the Conservatorio Eliseo Pinedo de La Rioja under María Ángeles Dieste.</p>
-        <p>During his time at ESMUC he took part in the artistic residency of composer Luis Tabuenca at Fabra i Coats, Barcelona, for the project <em>Naturstudium</em>, and performed <em>Kraft</em> by Magnus Lindberg as soloist alongside the composer and the ESMUC orchestra (2023). He twice took part in the Joan Guinjoan International Composition Prize as an interpreter (2024, 2026), and performed Giacinto Scelsi's <em>Hyxos</em> with Duo Hyxos across Catalan institutional venues, including the Parlament de Catalunya, the Ajuntament de Barcelona and the Fundació Antoni Tàpies (2023–2024).</p>
-        <p>As a soloist, he has performed at La Lonja Art Gallery within Festival Actual, Logroño, at Forum3 Bern's Kolumbianische Nacht (2025), and appeared as a free improviser at À la pièce Dance Festival (2026).</p>
-        <p>He is co-founder of Páramo 26005, presented at the Barullo Festival, Logroño. With trumpeter Carmen Llena he leads the duo Marianito Rojo, performing at La Guarida, Bern, and the Troubadour, London.</p>
-        <p>He has also performed as percussionist at the Teatre Nacional de Catalunya and Les Jardins Musicaux festival, with the percussion ensemble Percu-Rioja at the Ágora International Percussion Festival, with the HKB electronic ensemble at Pop-Up Festival, Bern, and with Vivace, a group dedicated to traditional music from La Rioja with regular appearances at summer festivals and Festival Actual.</p>
-        <p>He has collaborated as principal timpanist with the Original Soundtrack Orquestra (2022–2023), and performed with ensembles including the Orquestra Simfònica del Vallès, Franz Schubert Filharmonia and the National Orchestra of Andorra in Spain, and the Orchester Solothurn, Stadtorchester Thun, Stadt- und Universitätsorchester Freiburg, the Bern Chamber Orchestra and Chor Syndicats Basel in Switzerland.</p>
-        <p>He is a member of PAKT Bern, and a recipient of the Albert Hänggi Scholarship and the Beca Inicia from the Logroño City Council, for his project <em>El silencio de Valvanera</em>.</p>
+      <div class="section-label" data-i18n="label.bio">Bio</div>
+      <div class="bio-layout reveal">
+
+
+        <div class="bio-body" id="bio-body">
+
+          <div class="bio-short" data-i18n-html="bio.short">
+            <p>Álvaro Ayuso (Logroño, 2000) is a percussionist and sound artist based in Bern. His work starts from acoustic percussion and extends into live electronics and installation, combining digital tools, circuits and self-built devices as though they were a single instrument. He is drawn to sound at an almost physical level: how it is generated and what can be altered from within. Drawing on the memory and landscape of the rural surroundings he comes from, he builds his own programmes — writing the music and, at times, making the instruments — such as <em>Piñas, platos y patches</em> and <em>El silencio de Valvanera</em>.</p>
+            <p>He has worked with the group Frames Percussion and with composers including Magnus Lindberg, Matthew Shlomowitz and Gary Berger; he has premiered works by Altin Volaj, María Amor, Tibor Kovács and Yido Chae, and has taken part as a performer in two editions of the Joan Guinjoan International Composition Prize. His work has been presented at Festival Actual (Logroño), the Teatre Nacional de Catalunya (Barcelona), Les Jardins Musicaux (Cernier) and the Troubadour (London). His projects include the collective Páramo 26005, which he co-founded, the duo Marianito Rojo with trumpeter Carmen Llena, and a free improvisation duo with composer Tibor Kovács. Trained at ESMUC and at the Hochschule der Künste Bern, where he is pursuing a Master in Contemporary Arts Practice, he is a recipient of the Albert Hänggi Scholarship.</p>
+          </div>
+
+          <div class="bio-long" data-i18n-html="bio.long">
+            <p>Álvaro Ayuso (Logroño, 2000) is a percussionist and sound artist based in Bern. His work starts from acoustic percussion and extends into live electronics and installation, combining digital tools, circuits and self-built devices as though they were a single instrument. He is drawn to sound at an almost physical level: how it is generated, what happens inside it and what can be altered from within. In his work, material and narrative coexist. Drawing on the memory and landscape of the rural surroundings he comes from, he brings together object-making and audiovisual media to turn listening into a fully narrative experience.</p>
+            <p>This twofold attention takes shape in programmes he builds from end to end, composing for them and at times making his own instruments. <em>Piñas, platos y patches</em> traces different forms of relationship between human beings and technology, from the organic object to digital synthesis, with works commissioned for the project and one of his own, <em>SaintLeo</em>, for percussion, live electronics and video. Along the same lines, in November he premieres <em>El silencio de Valvanera</em>, a concert-performance on the cultural heritage of La Rioja, for which he received the Beca Inicia of the Logroño City Council.</p>
+            <p>As a performer he has worked with the group Frames Percussion (Barcelona) and with composers including Magnus Lindberg, Matthew Shlomowitz, Gary Berger and Luis Tabuenca. He has premiered works by Altin Volaj, María Amor, Tibor Kovács, Lluís Pérez Villegas and Yido Chae, and has taken part in two editions of the Joan Guinjoan International Composition Prize as a member of the ensemble. He also writes the electronics for other composers' pieces, such as Altin Volaj's <em>Echoes of the Past</em>, and composed the theme music for the podcast <em>Invertebrados</em>.</p>
+            <p>He is co-founder of the collective Páramo 26005 and a regular free improviser: with trumpeter Carmen Llena he forms the duo Marianito Rojo, and with composer Tibor Kovács a duo of hybrid percussion and modular synthesis oriented towards slow, drone-like textures. He is also part of the percussion collective Percu-Rioja, develops Desmayus, a personal live-looping project blending techno, hip-hop and flamenco from a performative perspective, and plays percussion in Vivace, a traditional music group from La Rioja.</p>
+            <p>His work has been presented at festivals and events including Festival Actual, Festival Barullo and Nos Vamos de Pira (Logroño), the Ágora International Percussion Festival (Jávea), Forum3's Kolumbianische Nacht and the 4th Berner Beratungstagung at the BFH (Bern), À la pièce Dance Festival (Biel) and Les Jardins Musicaux (Cernier); and in venues such as the Palau de la Música Catalana, the Teatre Nacional de Catalunya and the Fundació Antoni Tàpies (Barcelona), La Lonja Art Gallery (Logroño), La Guarida (Bern) and the Troubadour (London).</p>
+            <p>He studied at the Escola Superior de Música de Catalunya (ESMUC) and completed a Master in Percussion Performance at the Hochschule der Künste Bern (HKB) under Brian Archinal; he is currently pursuing a second Master in Contemporary Arts Practice at the same institution, specialising in sound arts. He is a member of PAKT Bern, the city's new music network, and a recipient of the Albert Hänggi Foundation Scholarship.</p>
+          </div>
+
+          <button class="bio-toggle" id="bio-toggle" type="button" aria-expanded="false" aria-controls="bio-body" data-i18n="bio.more">Read full biography</button>
+
+        </div>
+
+        <figure class="bio-photo">
+          <img src="images/bio.webp" loading="lazy" alt="Álvaro Ayuso">
+          <!-- Si conoces al autor de la foto, pon aquí el crédito: <figcaption>Foto: Nombre Apellido</figcaption> -->
+        </figure>
       </div>
+    </div>
+  </div>
+
+  <!-- ── MEDIA ── -->
+  <div class="page" id="page-media">
+    <div class="content-section">
+
+      <div class="section-label" data-i18n="label.video">Video</div>
+      <div class="media-grid reveal">
+          <div class="media-item">
+            <div class="lite" data-id="gWSaYeWoHqw" role="button" tabindex="0" aria-label="Play: Yido Chae, Possessed (and they came all at once)"
+                 style="background-image:url('https://i.ytimg.com/vi/gWSaYeWoHqw/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m1.t">Yido Chae, Possessed (and they came all at once)</div>
+            <div class="media-meta" data-i18n="m1.m">Premiere · À suivre, Bern, 2026</div>
+          </div>
+          <div class="media-item">
+            <div class="lite" data-id="Eek16OJAyn4" data-start="522" role="button" tabindex="0" aria-label="Play: Joan Guinjoan International Composition Prize"
+                 style="background-image:url('https://i.ytimg.com/vi/Eek16OJAyn4/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m2.t">Joan Guinjoan International Composition Prize</div>
+            <div class="media-meta" data-i18n="m2.m">As a performer with the ensemble</div>
+          </div>
+          <div class="media-item">
+            <div class="lite" data-id="5wlV4x4biBU" role="button" tabindex="0" aria-label="Play: Cort Lippe, Duo for Cajón and Computer"
+                 style="background-image:url('https://i.ytimg.com/vi/5wlV4x4biBU/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m3.t">Cort Lippe, Duo for Cajón and Computer</div>
+            <div class="media-meta" data-i18n="m3.m">Percussion and live electronics</div>
+          </div>
+          <div class="media-item">
+            <div class="lite" data-id="lN92e2GRi54" role="button" tabindex="0" aria-label="Play: Philippe Manoury, Le livre des claviers IV"
+                 style="background-image:url('https://i.ytimg.com/vi/lN92e2GRi54/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m4.t">Philippe Manoury, Le livre des claviers IV</div>
+            <div class="media-meta" data-i18n="m4.m">Vibraphone</div>
+          </div>
+          <div class="media-item">
+            <div class="lite" data-id="0mbYYtP2RNo" role="button" tabindex="0" aria-label="Play: Charles Wuorinen, Janissary Music I"
+                 style="background-image:url('https://i.ytimg.com/vi/0mbYYtP2RNo/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m5.t">Charles Wuorinen, Janissary Music I</div>
+            <div class="media-meta" data-i18n="m5.m">Percussion solo</div>
+          </div>
+      </div>
+
+      <div class="section-label section-label--next" data-i18n="label.press">Press &amp; downloads</div>
+      <div class="card-grid reveal">
+        <a class="card" href="https://cadenaser.com/audio/1767969542867/" target="_blank" rel="noopener">
+          <span class="card-kind" data-i18n="c1.k">Interview</span>
+          <span class="card-title" data-i18n="c1.t">Cadena SER</span>
+          <span class="card-meta" data-i18n="c1.m">Radio · Spanish</span>
+        </a>
+        <a class="card" href="https://drive.google.com/drive/folders/1z0NdVS2NOtA8LWhPP30CrY9Uo-82XfF7" target="_blank" rel="noopener">
+          <span class="card-kind" data-i18n="c2.k">Press kit</span>
+          <span class="card-title" data-i18n="c2.t">High-resolution photos and biography</span>
+          <span class="card-meta" data-i18n="c2.m">Google Drive</span>
+        </a>
+      </div>
+
     </div>
   </div>
 
   <!-- ── CONTACT ── -->
   <div class="page" id="page-contact">
     <div class="content-section">
-      <div class="section-label">Contact</div>
+      <div class="section-label" data-i18n="label.contact">Contact</div>
       <div class="text-block contact reveal">
         <p><a href="mailto:alvaroayuso00@hotmail.com">alvaroayuso00@hotmail.com</a></p>
         <div class="links">
@@ -456,29 +676,173 @@
     }
     initReveals();
 
-    // ── Custom cursor ──
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    let mx = -100, my = -100, rx = -100, ry = -100;
+    // ── Bio: short / long ──
+    const bioToggle = document.getElementById('bio-toggle');
+    const bioBody = document.getElementById('bio-body');
+    if (bioToggle && bioBody) {
+      bioToggle.addEventListener('click', () => {
+        const open = bioBody.classList.toggle('long-open');
+        const es = document.documentElement.lang === 'es';
+        bioToggle.textContent = open
+          ? (es ? 'Ver la biografía corta' : 'Show short biography')
+          : (es ? 'Leer la biografía completa' : 'Read full biography');
+        bioToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (!open) window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
 
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px';
-      dot.style.top = my + 'px';
-    });
-
-    (function animRing() {
-      rx += (mx - rx) * 0.1;
-      ry += (my - ry) * 0.1;
-      ring.style.left = rx + 'px';
-      ring.style.top = ry + 'px';
-      requestAnimationFrame(animRing);
+    // ── Vídeo de fondo: solo en escritorio y si no se pide menos movimiento ──
+    (function () {
+      const v = document.getElementById('bg-video');
+      if (!v) return;
+      const grande = window.matchMedia('(min-width: 901px)').matches;
+      const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const ahorro = navigator.connection && navigator.connection.saveData;
+      if (grande && !quieto && !ahorro) {
+        v.src = v.dataset.src;
+        v.load();
+      }
     })();
 
-    document.addEventListener('mouseover', e => {
-      if (e.target.closest('a, button, iframe')) dot.classList.add('hover');
-      else dot.classList.remove('hover');
+    // ── Vídeo: cargar el iframe solo al hacer clic ──
+    function initLite(el) {
+      if (el.dataset.loaded) return;
+      el.dataset.loaded = '1';
+      const start = el.dataset.start ? '&start=' + el.dataset.start : '';
+      const f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + el.dataset.id + '?autoplay=1&rel=0' + start;
+      f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+      f.allowFullscreen = true;
+      f.title = el.getAttribute('aria-label') || 'video';
+      el.appendChild(f);
+      el.querySelector('.play')?.remove();
+    }
+    document.querySelectorAll('.lite').forEach(el => {
+      // si YouTube no tiene miniatura en alta, caer a la estándar
+      const probe = new Image();
+      probe.onerror = () => {
+        el.style.backgroundImage = "url('https://i.ytimg.com/vi/" + el.dataset.id + "/hqdefault.jpg')";
+      };
+      probe.src = 'https://i.ytimg.com/vi/' + el.dataset.id + '/maxresdefault.jpg';
+      el.addEventListener('click', () => initLite(el));
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); initLite(el); }
+      });
     });
+
+    // ── Idioma: inglés por defecto, español opcional ──
+    const ES = {
+  "nav.work": "Obra",
+  "nav.projects": "Proyectos",
+  "nav.agenda": "Agenda",
+  "nav.media": "Media",
+  "nav.contact": "Contacto",
+  "hero.role": "Percusión · Electrónica en vivo · Arte sonoro",
+  "label.work": "Obra — Composiciones",
+  "label.projects": "Proyectos — Colaboraciones",
+  "label.agenda": "Agenda",
+  "label.bio": "Bio",
+  "label.video": "Vídeo",
+  "label.press": "Prensa y descargas",
+  "label.contact": "Contacto",
+  "w1.h": "Primeros experimentos",
+  "w1.p": "Viniendo de la percusión clásica, mis primeras exploraciones con la electrónica surgieron a través de la cinta en relación con el repertorio existente: una cinta para <em>Figment V</em> de Elliott Carter que refuerza sus modulaciones rítmicas, y una versión superpuesta de la Sarabanda y su Doble de la suite para laúd de Bach, donde ambas texturas interactúan (a partir del 1:46).",
+  "w2.h": "Tom Cage",
+  "w2.p": "Pieza para tom, pedal y controlador MIDI inspirada en las ideas de Cage sobre la indeterminación y la agencia del intérprete. El sistema electrónico introduce una imprevisibilidad controlada que permite influir en la estructura y la evolución de la pieza en tiempo real.",
+  "w3.h": "Manta",
+  "w3.p": "Para vibráfono y electrónica, inspirada en <em>Mantra</em> de Stockhausen y su uso de la modulación en anillo. La idea se traslada al vibráfono para explorar cómo la modulación transforma el sonido y el carácter armónico del instrumento.",
+  "w4.h": "Set híbrido de percusión",
+  "w4.p": "Un montaje híbrido que combina percusión y electrónica en vivo: instrumentos de percusión, controladores MIDI y dispositivos propios de Max for Live que interactúan mediante procesamiento en tiempo real dentro de Ableton. Se ha convertido en una herramienta central de mi práctica, tanto para improvisar como en otros proyectos, y sigo ampliándolo a medida que aprendo nuevas herramientas.",
+  "w5.h": "Banda sonora para cine experimental",
+  "w5.p": "Banda sonora original para un documental experimental de la cineasta Alma Tejada sobre una cueva de La Rioja. La película explora las texturas y la atmósfera del espacio, atendiendo a la relación entre paisaje, geología y sonido; la música se creó para acompañar su ritmo visual.",
+  "p1.h": "Marianito Rojo",
+  "p1.p": "Dúo con la trompetista Carmen Llena centrado en la performance experimental y la improvisación. El proyecto se mueve entre el material compuesto y las formas abiertas, dejando que el sonido surja de la interacción y la escucha. Partiendo de la música contemporánea, la improvisación y el jazz, usamos electrónica en vivo para ampliar los instrumentos acústicos y transformarlos en tiempo real.",
+  "p2.h": "Páramo 26005",
+  "p2.p": "Soy cofundador del colectivo de creación sonora Páramo 26005, junto a Adrián Fuentes y Juls Ruiz. Dentro del proyecto participo como músico y contribuyo al desarrollo compositivo de las piezas, además de a la concepción sonora de la obra y a la integración de la electrónica en vivo.",
+  "p3.h": "Dúo con Tibor Kovács",
+  "p3.p": "Dúo centrado en la improvisación libre, con mi set híbrido de percusión y electrónica y el sistema de síntesis modular de Tibor, orientado en general hacia mundos sonoros lentos, atmosféricos y cercanos al drone. También creamos <em>SoL</em>, un proyecto de performance que combina sonido, luz e imagen distorsionada.",
+  "ag1.h": "Madame Bovary",
+  "ag1.r": "Percusión",
+  "ag1.m": "Jul 2026",
+  "ag2.h": "John Cage — <em>Four⁴</em>",
+  "ag2.r": "Cuarteto de percusión · coproducción HKB",
+  "ag2.m": "Ago 2026",
+  "ag3.h": "El silencio de Valvanera",
+  "ag3.r": "Beca Inicia",
+  "ag3.m": "Nov 2026",
+  "bio.more": "Leer la biografía completa",
+  "m1.t": "Yido Chae, Possessed (and they came all at once)",
+  "m1.m": "Estreno · À suivre, Berna, 2026",
+  "m2.t": "Premio Internacional de Composición Joan Guinjoan",
+  "m2.m": "Como intérprete del ensemble",
+  "m3.t": "Cort Lippe, Duo for Cajón and Computer",
+  "m3.m": "Percusión y electrónica en vivo",
+  "m4.t": "Philippe Manoury, Le livre des claviers IV",
+  "m4.m": "Vibráfono",
+  "m5.t": "Charles Wuorinen, Janissary Music I",
+  "m5.m": "Percusión sola",
+  "c1.k": "Entrevista",
+  "c1.t": "Cadena SER",
+  "c1.m": "Radio · español",
+  "c2.k": "Press kit",
+  "c2.t": "Fotos en alta resolución y biografía",
+  "c2.m": "Google Drive",
+  "cap.garyberger": "Gary Berger, 31 mal lösen · Piñas, platos y patches",
+  "cap.marianito-1": "Marianito Rojo en el Troubadour, Londres",
+  "cap.marianito-2": "Marianito Rojo en el Troubadour, Londres",
+  "cap.marianito-3": "Marianito Rojo en el Troubadour, Londres",
+  "cap.marianito-5": "Marianito Rojo en el Troubadour, Londres",
+  "cap.saintleo": "SaintLeo · Piñas, platos y patches",
+  "cap.solo-5": "Naturstudium, residencia con Luis Tabuenca, Fabra i Coats, Barcelona",
+  "cap.so-primari": "María Amor, So primari · Piñas, platos y patches",
+  "cap.Feller-4": "Cort Lippe, Duo for Cajón and Computer",
+  "cap.shlomowitz": "Matthew Shlomowitz, Popular Contexts 8",
+  "cap.solo-7": "Entre pulsos y paisajes en La Lonja, Logroño",
+  "cap.Feller-5": "Tom Cage"
+};
+    const BIO_ES = {
+      "bio.short": "<p>Álvaro Ayuso (Logroño, 2000) es percusionista y artista sonoro afincado en Berna. Su trabajo parte de la percusión acústica y se extiende hacia la electrónica en vivo y la instalación, combinando herramientas digitales, circuitos y dispositivos de creación propia como si fueran un único instrumento. Le interesa el sonido casi a nivel físico: cómo se genera y qué puede modificarse desde dentro. Inspirado en la memoria y el paisaje de su entorno rural, construye programas para los que compone y a veces fabrica sus propios instrumentos, como <em>Piñas, platos y patches</em> o <em>El silencio de Valvanera</em>.</p><p>Ha colaborado con el grupo Frames Percussion y con compositores como Magnus Lindberg, Matthew Shlomowitz y Gary Berger; ha estrenado obras de Altin Volaj, María Amor, Tibor Kovács y Yido Chae, y ha participado como intérprete en dos ediciones del Premio Internacional de Composición Joan Guinjoan. Su trabajo se ha presentado en el Festival Actual (Logroño), el Teatre Nacional de Catalunya (Barcelona), Les Jardins Musicaux (Cernier) o el Troubadour (Londres). Entre sus proyectos están el colectivo Páramo 26005, del que es cofundador, el dúo Marianito Rojo con la trompetista Carmen Llena y un dúo de improvisación libre con el compositor Tibor Kovács. Formado en la ESMUC y en la Hochschule der Künste Bern, donde cursa un máster en Contemporary Arts Practice, es beneficiario de la beca Albert Hänggi.</p>",
+      "bio.long": "<p>Álvaro Ayuso (Logroño, 2000) es percusionista y artista sonoro afincado en Berna. Su trabajo parte de la percusión acústica y se extiende hacia la electrónica en vivo y la instalación, combinando herramientas digitales, circuitos y dispositivos de creación propia como si fueran un único instrumento. Le interesa el sonido casi a nivel físico: cómo se genera, qué ocurre dentro de él y qué puede modificarse desde dentro. En su obra, la materia convive con el relato. Inspirado en la memoria y el paisaje de su entorno rural, combina la creación objetual y el soporte audiovisual para transformar la escucha en una experiencia narrativa integral.</p><p>Esa doble atención se concreta en programas que construye de principio a fin, para los que compone y a veces fabrica sus propios instrumentos. <em>Piñas, platos y patches</em> recorre distintas formas de relación entre el ser humano y la tecnología, del objeto orgánico a la síntesis digital, con obras comisionadas para el proyecto y una suya, <em>SaintLeo</em>, para percusión, electrónica en vivo y vídeo. En esa misma línea estrena en noviembre <em>El silencio de Valvanera</em>, un concierto-performance sobre el patrimonio riojano para el que recibió la Beca Inicia del Ayuntamiento de Logroño.</p><p>Como intérprete ha colaborado con el grupo Frames Percussion (Barcelona) y con compositores como Magnus Lindberg, Matthew Shlomowitz, Gary Berger y Luis Tabuenca. Ha estrenado obras de Altin Volaj, María Amor, Tibor Kovács, Lluís Pérez Villegas y Yido Chae, y ha participado en dos ediciones del Premio Internacional de Composición Joan Guinjoan como intérprete del ensemble. También firma la electrónica de piezas ajenas, como <em>Echoes of the Past</em> de Altin Volaj, y la música de cabecera del podcast <em>Invertebrados</em>.</p><p>Es cofundador del colectivo Páramo 26005 y practica habitualmente la improvisación libre: con la trompetista Carmen Llena forma el dúo Marianito Rojo, y con el compositor Tibor Kovács un dúo de percusión híbrida y síntesis modular orientado a texturas lentas y cercanas al drone. Forma parte también del colectivo de percusión Percu-Rioja, desarrolla Desmayus, un proyecto personal de live looping en el que cruzan el techno, el hip-hop y el flamenco desde una perspectiva performativa, y es percusionista de Vivace, grupo de música tradicional riojana.</p><p>Su trabajo se ha presentado en festivales y eventos como el Festival Actual, el Festival Barullo y Nos Vamos de Pira (Logroño), el Festival Ágora Internacional de Percusión (Jávea), la Kolumbianische Nacht de Forum3 y la 4ª Berner Beratungstagung de la BFH (Berna), À la pièce Dance Festival (Biel) o Les Jardins Musicaux (Cernier); y en espacios como el Palau de la Música Catalana, el Teatre Nacional de Catalunya y la Fundació Antoni Tàpies (Barcelona), la Galería de Arte La Lonja (Logroño), La Guarida (Berna) o el Troubadour (Londres).</p><p>Se formó en la Escola Superior de Música de Catalunya (ESMUC) y cursó el Máster en Interpretación de Percusión en la Hochschule der Künste Bern (HKB) bajo la tutela de Brian Archinal; actualmente realiza un segundo máster en Contemporary Arts Practice en la misma institución, especializándose en artes sonoras. Es miembro de PAKT Bern, la red de nueva música de la ciudad, y beneficiario de la beca de la Fundación Albert Hänggi.</p>"
+    };
+    const EN = {}, BIO_EN = {};
+    document.querySelectorAll('[data-i18n]').forEach(el => EN[el.dataset.i18n] = el.innerHTML);
+    document.querySelectorAll('[data-i18n-html]').forEach(el => BIO_EN[el.dataset.i18nHtml] = el.innerHTML);
+    document.querySelectorAll('[data-i18n-cap]').forEach(el => EN[el.dataset.i18nCap] = el.querySelector('figcaption').textContent);
+
+    function setLang(l) {
+      const dic = l === 'es' ? ES : EN;
+      const bio = l === 'es' ? BIO_ES : BIO_EN;
+      document.documentElement.lang = l;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const v = dic[el.dataset.i18n]; if (v !== undefined) el.innerHTML = v;
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const v = bio[el.dataset.i18nHtml]; if (v !== undefined) el.innerHTML = v;
+      });
+      document.querySelectorAll('[data-i18n-cap]').forEach(el => {
+        const v = dic[el.dataset.i18nCap]; if (v === undefined) return;
+        el.querySelector('figcaption').textContent = v;
+        el.querySelector('img').alt = v;
+      });
+      const b = document.getElementById('bio-body');
+      if (b && bioToggle) {
+        const abierta = b.classList.contains('long-open');
+        bioToggle.textContent = l === 'es'
+          ? (abierta ? 'Ver la biografía corta' : 'Leer la biografía completa')
+          : (abierta ? 'Show short biography' : 'Read full biography');
+      }
+      document.querySelectorAll('[data-lang-opt]').forEach(sp =>
+        sp.classList.toggle('on', sp.dataset.langOpt === l));
+      try { localStorage.setItem('lang', l); } catch (e) {}
+    }
+
+    const sw = document.getElementById('lang-switch');
+    if (sw) sw.addEventListener('click', () =>
+      setLang(document.documentElement.lang === 'es' ? 'en' : 'es'));
+    let inicial = 'en';
+    try { if (localStorage.getItem('lang') === 'es') inicial = 'es'; } catch (e) {}
+    setLang(inicial);
+
   </script>
 </body>
 </html>
