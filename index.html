@@ -23,7 +23,13 @@
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- El móvil necesita tamaños grandes: con 32px se veía borroso o no salía. -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <!-- De aquí saca Chrome en Android el icono; sin manifest no lo encontraba. -->
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0B0B0B">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
@@ -380,8 +386,7 @@
 
   <video class="bg-video" id="bg-video" autoplay muted loop playsinline
          preload="none" poster="images/poster.webp"
-         data-src="video/parawebvideo-web.mp4"
-         data-src-movil="video/parawebvideo-movil.mp4"></video>
+         data-src="video/parawebvideo-web.mp4"></video>
   <div class="bg-overlay"></div>
 
   <nav>
@@ -852,8 +857,11 @@
       const lenta = /(^|-)2g$/.test(con.effectiveType || '');
       if (quieto || ahorro || lenta) return;
 
-      // Escritorio: 7,9 MB. Móvil: la versión ligera de 640 KB.
-      const fuente = grande ? v.dataset.src : v.dataset.srcMovil;
+      // Un solo archivo para todos: 1280x720, el mismo en móvil y en escritorio.
+      // Antes el móvil recibía una versión reducida y se le notaba la calidad.
+      // El archivo lleva el índice al principio (faststart), así que empieza a
+      // verse enseguida en vez de esperar a bajarse entero.
+      const fuente = v.dataset.src;
       if (!fuente) return;
 
       function cargar() {
