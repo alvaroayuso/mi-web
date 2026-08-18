@@ -61,8 +61,12 @@
       background: linear-gradient(to bottom, rgba(11,11,11,0.78), rgba(11,11,11,0));
       z-index: -1; pointer-events: none;
     }
+    /* El nombre y el selector de idioma van juntos a la izquierda. El tamaño
+       base lo fija el contenedor y el selector se mide en em, así queda siempre
+       en proporción al nombre aunque este cambie de tamaño. */
+    .nav-left { display: flex; align-items: baseline; gap: 0.8rem; font-size: 0.82rem; }
     .nav-name {
-      font-size: 0.82rem; letter-spacing: 0.06em; font-weight: 400;
+      font-size: 1em; letter-spacing: 0.06em; font-weight: 400;
       text-decoration: none; color: var(--fg); opacity: 0.9;
       transition: opacity 0.3s ease;
     }
@@ -224,8 +228,10 @@
     /* ── Selector de idioma ── */
     .lang-switch {
       background: none; border: none; font-family: inherit;
-      font-size: 0.78rem; letter-spacing: 0.08em; color: var(--fg);
-      padding: 0; margin-left: 0.6rem; display: inline-flex; gap: 0.35rem;
+      /* Un punto por debajo del nombre, no más: se nota que es secundario
+         sin que parezca de otro tamaño. */
+      font-size: 0.88em; letter-spacing: 0.08em; color: var(--fg);
+      padding: 0; display: inline-flex; gap: 0.3rem;
     }
     .lang-switch span { opacity: 0.4; transition: opacity 0.3s ease; }
     .lang-switch .sep { opacity: 0.25; }
@@ -258,6 +264,9 @@
     }
     .lite:hover .play { border-color: var(--fg); transform: translate(-50%,-50%) scale(1.06); }
     .lite iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 3; }
+    /* En Obra y Proyectos el lite va dentro de .video-wrap, que ya pone el 16:9:
+       aquí solo tiene que rellenarlo, sin volver a calcular la proporción. */
+    .video-wrap .lite { position: absolute; inset: 0; width: 100%; height: 100%; padding-bottom: 0; }
 
     /* ── Hero teaser ── */
     .teaser-sec { padding: clamp(4rem, 11vh, 7rem) 2rem 0; }
@@ -333,8 +342,9 @@
          aquí se le da sitio por debajo. */
       .content-section { padding-top: 9.5rem; }
       /* El nombre es el enlace a la portada. Estaba oculto en móvil, así que
-         desde el móvil no había forma de volver al inicio. */
-      .nav-name { display: block; font-size: 0.78rem; }
+         desde el móvil no había forma de volver al inicio. El selector de
+         idioma va en la misma fila y encoge con él. */
+      .nav-left { display: flex; font-size: 0.78rem; }
       /* A 390px no caben los seis enlaces + EN/ES en una fila: se cortaba
          "Contact" y el selector de idioma quedaba fuera de pantalla. */
       .nav-links { gap: 1.1rem; row-gap: 0.55rem; font-size: 0.72rem; flex-wrap: wrap; }
@@ -363,7 +373,10 @@
   <div class="bg-overlay"></div>
 
   <nav>
-    <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
+    <div class="nav-left">
+      <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
+      <button class="lang-switch" id="lang-switch" type="button" aria-label="Cambiar idioma"><span data-lang-opt="en">EN</span><span class="sep">/</span><span data-lang-opt="es">ES</span></button>
+    </div>
     <div class="nav-links">
       <a href="#" data-page="projects" data-i18n="nav.projects">Projects</a>
       <a href="#" data-page="work" data-i18n="nav.work">Work</a>
@@ -371,7 +384,6 @@
       <a href="#" data-page="bio">Bio</a>
       <a href="#" data-page="media" data-i18n="nav.media">Media</a>
       <a href="#" data-page="contact" data-i18n="nav.contact">Contact</a>
-      <button class="lang-switch" id="lang-switch" type="button" aria-label="Cambiar idioma"><span data-lang-opt="en">EN</span><span class="sep">/</span><span data-lang-opt="es">ES</span></button>
     </div>
   </nav>
 
@@ -455,13 +467,13 @@
         <div class="project reveal">
           <h3 data-i18n="w1.h">Tom Cage</h3>
           <p data-i18n="w1.p">A piece for tom, pedal and MIDI controller inspired by John Cage's ideas of indeterminacy and performer agency. The electronic system introduces controlled unpredictability, allowing the performer to influence the structure and evolution of the piece in real time.</p>
-          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/hVBeSFSkjwE" allowfullscreen loading="lazy" title="Tom Cage – Percussion and Live Electronics"></iframe></div>
+          <div class="video-wrap"><div class="lite" data-id="hVBeSFSkjwE" role="button" tabindex="0" aria-label="Play: Tom Cage · Percussion and Live Electronics" style="background-image:url('https://i.ytimg.com/vi/hVBeSFSkjwE/maxresdefault.jpg')"><span class="play"></span></div></div>
         </div>
 
         <div class="project reveal">
           <h3 data-i18n="w2.h">Manta</h3>
           <p data-i18n="w2.p">For vibraphone and electronics, inspired by Stockhausen's <em>Mantra</em> and its use of ring modulation. The idea is translated to the vibraphone, exploring how modulation can transform the instrument's sound and harmonic character.</p>
-          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/155Bl-2jvdI" allowfullscreen loading="lazy" title="Manta – Vibraphone and Live Electronics"></iframe></div>
+          <div class="video-wrap"><div class="lite" data-id="155Bl-2jvdI" role="button" tabindex="0" aria-label="Play: Manta · Vibraphone and Live Electronics" style="background-image:url('https://i.ytimg.com/vi/155Bl-2jvdI/maxresdefault.jpg')"><span class="play"></span></div></div>
         </div>
 
         <div class="project reveal">
@@ -469,11 +481,11 @@
           <p data-i18n="w3.p">Coming from a classical percussion background, my first explorations with electronics emerged through tape in relation to existing repertoire: a fixed-media track for Elliott Carter's <em>Figment V</em> underlining its metric modulations, and another over the Sarabande and its Double from Bach's Partita No. 1 for solo violin, where the dance and its double sound at once and answer each other (from 1:46).</p>
           <div class="video-grid">
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/WFY744ehMjY" allowfullscreen loading="lazy" title="Elliott Carter – Figment V, tape version"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="WFY744ehMjY" role="button" tabindex="0" aria-label="Play: Elliott Carter · Figment V, tape version" style="background-image:url('https://i.ytimg.com/vi/WFY744ehMjY/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">Elliott Carter · Figment V</div>
             </div>
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/HjbJP3gmFMg" allowfullscreen loading="lazy" title="Bach – Sarabande & Double, layered tape version"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="HjbJP3gmFMg" role="button" tabindex="0" aria-label="Play: Bach · Sarabande &amp; Double, layered tape version" style="background-image:url('https://i.ytimg.com/vi/HjbJP3gmFMg/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">Bach · Sarabande &amp; Double BWV 1002</div>
             </div>
           </div>
@@ -486,7 +498,7 @@
         <div class="project reveal">
           <h3 data-i18n="i1.h">Hybrid Percussion Set</h3>
           <p data-i18n="i1.p">A hybrid setup combining percussion and live electronics: percussion instruments, MIDI controllers and custom Max for Live devices interacting through live processing in Ableton. It has become a central tool in my practice, used both for improvisation and across other projects, and I keep expanding it as I learn new tools.</p>
-          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/-wozCsaUd9M" allowfullscreen loading="lazy" title="Percussion and Live Electronics Improvisation"></iframe></div>
+          <div class="video-wrap"><div class="lite" data-id="-wozCsaUd9M" role="button" tabindex="0" aria-label="Play: Percussion and Live Electronics Improvisation" style="background-image:url('https://i.ytimg.com/vi/-wozCsaUd9M/maxresdefault.jpg')"><span class="play"></span></div></div>
         </div>
 
       </div>
@@ -505,11 +517,11 @@
           <p data-i18n="p1.p">A duo with trumpet player Carmen Llena focused on experimental performance and improvisation. The project moves between composed material and open forms, letting sound emerge through interaction and listening. Drawing from contemporary music, improvisation and jazz, we use live electronics to expand the acoustic instruments and allow real-time transformations.</p>
           <div class="video-grid">
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/UKUt65oGjRo" allowfullscreen loading="lazy" title="Marianito Rojo – ELEVATOR IMPRO"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="UKUt65oGjRo" role="button" tabindex="0" aria-label="Play: Marianito Rojo · ELEVATOR IMPRO" style="background-image:url('https://i.ytimg.com/vi/UKUt65oGjRo/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">ELEVATOR IMPRO</div>
             </div>
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/A9iNxaFtjUA" allowfullscreen loading="lazy" title="Marianito Rojo – La Tarara"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="A9iNxaFtjUA" role="button" tabindex="0" aria-label="Play: Marianito Rojo · La Tarara" style="background-image:url('https://i.ytimg.com/vi/A9iNxaFtjUA/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">La Tarara</div>
             </div>
           </div>
@@ -521,11 +533,11 @@
           <p data-i18n="p2.p">I am a co-founder of the sound-creation collective Páramo 26005, together with Adrián Fuentes and Juls Ruiz. Within the project I perform as a musician and contribute to the compositional development of the pieces, as well as to the sonic conception of the work and the integration of live electronics.</p>
           <div class="video-grid">
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/YxMCWcnsU-4" allowfullscreen loading="lazy" title="Páramo 26005 – Bulería de cactus"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="YxMCWcnsU-4" role="button" tabindex="0" aria-label="Play: Páramo 26005 · Bulería de cactus" style="background-image:url('https://i.ytimg.com/vi/YxMCWcnsU-4/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">Bulería de cactus</div>
             </div>
             <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/ql12GepwXGM" allowfullscreen loading="lazy" title="Páramo 26005 – X-47B (UCAV Experimental)"></iframe></div>
+              <div class="video-wrap"><div class="lite" data-id="ql12GepwXGM" role="button" tabindex="0" aria-label="Play: Páramo 26005 · X-47B (UCAV Experimental)" style="background-image:url('https://i.ytimg.com/vi/ql12GepwXGM/maxresdefault.jpg')"><span class="play"></span></div></div>
               <div class="video-caption">X-47B (UCAV Experimental)</div>
             </div>
           </div>
@@ -535,7 +547,7 @@
         <div class="project reveal">
           <h3 data-i18n="p3.h">Duo with Tibor Kovács</h3>
           <p data-i18n="p3.p">A duo focused on free improvisation, working with my hybrid percussion and electronics setup and Tibor's modular synthesis system, generally moving towards slower, atmospheric and drone-oriented sound worlds. We also created <em>SoL</em>, a performance project combining sound, light and distorted visual imagery.</p>
-          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/H9Bu3Gw9veA" allowfullscreen loading="lazy" title="SoL Trailer"></iframe></div>
+          <div class="video-wrap"><div class="lite" data-id="H9Bu3Gw9veA" role="button" tabindex="0" aria-label="Play: SoL Trailer" style="background-image:url('https://i.ytimg.com/vi/H9Bu3Gw9veA/maxresdefault.jpg')"><span class="play"></span></div></div>
           <div class="video-caption">SoL · trailer</div>
         </div>
 
@@ -762,15 +774,44 @@
     document.querySelector('[data-page="home"]').classList.add('current');
 
     // ── Scroll reveal ──
+    // Regla de seguridad: el texto y los vídeos empiezan invisibles y es el JS
+    // quien los muestra, así que si algo falla el contenido desaparece. Por eso
+    // hay tres redes: lo que ya está en pantalla se muestra en el acto, el
+    // observador se encarga del resto al bajar, y un plazo máximo lo enseña todo
+    // aunque el observador no llegue a dispararse.
     let revealObserver;
+    function mostrar(el) {
+      el.classList.add('visible');
+      if (revealObserver) revealObserver.unobserve(el);
+    }
     function initReveals() {
       if (revealObserver) revealObserver.disconnect();
-      revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }
-        });
-      }, { threshold: 0.1 });
-      document.querySelectorAll('.page.active .reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+      const pendientes = [...document.querySelectorAll('.page.active .reveal:not(.visible)')];
+
+      // 1. Lo que ya cae dentro de la pantalla se muestra sin esperar a nadie.
+      const alto = window.innerHeight || 0;
+      pendientes.forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < alto && r.bottom > 0) mostrar(el);
+      });
+
+      // 2. El resto, al ir bajando. threshold 0 en vez de 0.1: con bloques más
+      //    altos que la pantalla, pedir un porcentaje retrasaba la aparición.
+      if (!('IntersectionObserver' in window)) {
+        pendientes.forEach(mostrar);
+        return;
+      }
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) mostrar(e.target); });
+      }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+      pendientes.forEach(el => {
+        if (!el.classList.contains('visible')) revealObserver.observe(el);
+      });
+
+      // 3. Red final: pase lo que pase, a los 3 s no queda nada oculto.
+      setTimeout(() => {
+        document.querySelectorAll('.page.active .reveal:not(.visible)').forEach(mostrar);
+      }, 3000);
     }
     initReveals();
 
@@ -789,7 +830,7 @@
       });
     }
 
-    // ── Vídeo de fondo: solo en escritorio y si no se pide menos movimiento ──
+    // ── Vídeo de fondo ──
     (function () {
       const v = document.getElementById('bg-video');
       if (!v) return;
@@ -801,15 +842,34 @@
       const lenta = /(^|-)2g$/.test(con.effectiveType || '');
       if (quieto || ahorro || lenta) return;
 
-      // Escritorio: 7,9 MB. Móvil: la versión ligera de 1,2 MB.
+      // Escritorio: 7,9 MB. Móvil: la versión ligera de 640 KB.
       const fuente = grande ? v.dataset.src : v.dataset.srcMovil;
       if (!fuente) return;
-      const cargar = () => { v.src = fuente; v.load(); };
-      // En móvil el póster ya se ve; el vídeo entra después, sin competir
-      // con las fotos por el ancho de banda.
+
+      function cargar() {
+        v.src = fuente;
+        v.load();
+        // En móvil hay que pedir la reproducción a mano: al poner el src por JS
+        // después de cargar la página, el autoplay del atributo ya no dispara.
+        // Si el navegador la rechaza, se queda el póster y no pasa nada.
+        const intento = v.play();
+        if (intento && intento.catch) intento.catch(() => {});
+      }
+
+      // Antes esto esperaba al evento load, que en móvil no llega hasta que han
+      // bajado las 48 fotos de la galería: el vídeo no arrancaba nunca. Ahora
+      // entra en cuanto el navegador está desahogado, sin bloquear el pintado.
       if (grande) cargar();
-      else if (document.readyState === 'complete') setTimeout(cargar, 600);
-      else window.addEventListener('load', () => setTimeout(cargar, 600));
+      else if ('requestIdleCallback' in window) requestIdleCallback(cargar, { timeout: 2000 });
+      else setTimeout(cargar, 800);
+
+      // Al volver a la pestaña, iOS deja el vídeo parado: se reanuda.
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && v.src && v.paused) {
+          const r = v.play();
+          if (r && r.catch) r.catch(() => {});
+        }
+      });
     })();
 
     // ── Vídeo: cargar el iframe solo al hacer clic ──
