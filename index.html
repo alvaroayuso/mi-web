@@ -4,6 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Álvaro Ayuso</title>
+  <meta name="description" content="Percussionist and sound artist based in Bern. Acoustic percussion, live electronics and self-built instruments, on stage and in installation.">
+  <link rel="canonical" href="https://alvaro-ayuso.com/">
+
+  <!-- Tarjeta al pegar el enlace en un correo, WhatsApp, Instagram, etc. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Álvaro Ayuso">
+  <meta property="og:url" content="https://alvaro-ayuso.com/">
+  <meta property="og:title" content="Álvaro Ayuso">
+  <meta property="og:description" content="Percussionist and sound artist based in Bern. Acoustic percussion, live electronics and self-built instruments, on stage and in installation.">
+  <meta property="og:image" content="https://alvaro-ayuso.com/images/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Álvaro Ayuso">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -28,13 +44,22 @@
 
     /* ── Background video (fixed, full page) ── */
     .bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.8s ease; }
-    .bg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: -1; }
+    /* El velo sobre el vídeo. --scrim lo mueve el JS: más claro en la portada,
+       más oscuro en las páginas con texto. */
+    .bg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,var(--scrim, 0.72)); z-index: -1; transition: background 0.5s ease; }
 
     /* ── Nav ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.5rem 2rem; z-index: 100;
+    }
+    /* Velo de arriba: con el vídeo más claro en la portada y las fotos pasando
+       por debajo al bajar, el menú necesita algo que lo despegue del fondo. */
+    nav::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: -2.5rem;
+      background: linear-gradient(to bottom, rgba(11,11,11,0.78), rgba(11,11,11,0));
+      z-index: -1; pointer-events: none;
     }
     .nav-name {
       font-size: 0.82rem; letter-spacing: 0.06em; font-weight: 400;
@@ -88,17 +113,47 @@
     /* ── Sections ── */
     .content-section { padding: clamp(5rem, 12vh, 9rem) 2rem; }
     .section-label {
-      font-weight: 400; font-size: 0.82rem; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--fg-faint);
-      margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--hairline);
+      font-weight: 300; font-size: clamp(1.9rem, 3.2vw, 2.8rem); letter-spacing: -0.02em;
+      line-height: 1.1; color: var(--fg);
+      margin-bottom: 2.5rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--hairline);
+      max-width: 1400px;
     }
 
     /* ── Projects ── */
-    .projects { max-width: 820px; }
-    .project { padding: 3rem 0; border-bottom: 1px solid var(--hairline); }
-    .project:first-child { padding-top: 0; }
-    .project h3 { font-weight: 400; font-size: 1.6rem; letter-spacing: -0.01em; margin-bottom: 0.8rem; color: var(--fg); }
-    .project p { color: var(--fg-muted); max-width: 62ch; margin-bottom: 1.5rem; }
+    .projects {
+      max-width: 1400px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* row-gap 0 a propósito: con subgrid, el hueco entre filas se metería
+         también entre el título y su texto. La separación entre obras la pone
+         el padding-bottom de cada .project. */
+      column-gap: 3rem; row-gap: 0; align-items: start;
+    }
+    /* Cada obra comparte las filas de la rejilla madre (subgrid), así el vídeo
+       arranca a la misma altura en las dos columnas aunque un texto tenga una
+       línea más que el otro. Fila 1 título, 2 texto, 3 vídeo, 4 lo que sobre. */
+    .project { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; padding-bottom: 3.5rem; }
+    /* Si un bloque tiene una sola obra, ocupa las dos columnas: el texto a la
+       izquierda y el vídeo a la derecha, en vez de dejar medio folio vacío. */
+    .projects > .project:only-child {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* La tercera fila, vacía en la columna del texto, se come el alto sobrante
+         del vídeo. Sin ella, el vídeo estira las filas y separa título y párrafo. */
+      grid-template-rows: auto auto 1fr;
+      column-gap: 3rem; align-content: start;
+    }
+    .projects > .project:only-child > h3         { grid-column: 1; grid-row: 1; }
+    .projects > .project:only-child > p          { grid-column: 1; grid-row: 2; margin-bottom: 0; }
+    .projects > .project:only-child > .video-wrap,
+    .projects > .project:only-child > .video-grid { grid-column: 2; grid-row: 1 / span 3; margin-bottom: 0; }
+    .project h3 { font-weight: 400; font-size: 1.25rem; letter-spacing: -0.01em; margin-bottom: 0.7rem; color: var(--fg); }
+    .project p { color: var(--fg-muted); margin-bottom: 1.3rem; }
+    @media (max-width: 860px) {
+      .projects { grid-template-columns: 1fr; }
+      .project { padding-bottom: 3rem; }
+      .projects > .project:only-child { display: block; }
+      .projects > .project:only-child > p { margin-bottom: 1.3rem; }
+    }
 
     /* ── Buttons & video ── */
     .watch {
@@ -273,14 +328,23 @@
 
     /* ── Mobile nav ── */
     @media (max-width: 600px) {
-      nav { flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.2rem 1.5rem; }
-      .nav-name { display: none; }
-      .nav-links { gap: 1.2rem; font-size: 0.72rem; }
+      nav { flex-direction: column; align-items: flex-start; gap: 0.65rem; padding: 1rem 1.5rem; }
+      /* El menú ocupa tres filas en móvil y se comía el rótulo de cada sección:
+         aquí se le da sitio por debajo. */
+      .content-section { padding-top: 9.5rem; }
+      /* El nombre es el enlace a la portada. Estaba oculto en móvil, así que
+         desde el móvil no había forma de volver al inicio. */
+      .nav-name { display: block; font-size: 0.78rem; }
+      /* A 390px no caben los seis enlaces + EN/ES en una fila: se cortaba
+         "Contact" y el selector de idioma quedaba fuera de pantalla. */
+      .nav-links { gap: 1.1rem; row-gap: 0.55rem; font-size: 0.72rem; flex-wrap: wrap; }
     }
 
     @media (max-width: 900px) {
-      .bg-video { display: none; }
-      .bg-overlay { background: var(--bg); }
+      /* Se separa el teaser del nombre por arriba y de la galería por abajo:
+         en pantalla estrecha iban demasiado seguidos. */
+      .teaser-sec  { padding-top: clamp(3rem, 9vh, 5rem); padding-bottom: clamp(3.5rem, 10vh, 5.5rem); }
+      .gallery-sec { padding-top: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -293,14 +357,16 @@
 <body>
 
   <video class="bg-video" id="bg-video" autoplay muted loop playsinline
-         preload="none" poster="images/poster.webp" data-src="video/parawebvideo-web.mp4"></video>
+         preload="none" poster="images/poster.webp"
+         data-src="video/parawebvideo-web.mp4"
+         data-src-movil="video/parawebvideo-movil.mp4"></video>
   <div class="bg-overlay"></div>
 
   <nav>
     <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
     <div class="nav-links">
-      <a href="#" data-page="work" data-i18n="nav.work">Work</a>
       <a href="#" data-page="projects" data-i18n="nav.projects">Projects</a>
+      <a href="#" data-page="work" data-i18n="nav.work">Work</a>
       <a href="#" data-page="agenda" data-i18n="nav.agenda">Agenda</a>
       <a href="#" data-page="bio">Bio</a>
       <a href="#" data-page="media" data-i18n="nav.media">Media</a>
@@ -383,55 +449,55 @@
   <!-- ── WORK ── -->
   <div class="page" id="page-work">
     <div class="content-section">
-      <div class="section-label" data-i18n="label.work">Work — Compositions</div>
+
+      <div class="section-label" data-i18n="label.comp">Compositions</div>
       <div class="projects">
-
         <div class="project reveal">
-          <h3 data-i18n="w1.h">Early Experiments</h3>
-          <p data-i18n="w1.p">Coming from a classical percussion background, my first explorations with electronics emerged through tape in relation to existing repertoire: a tape for Elliott Carter's <em>Figment V</em> reinforcing its rhythmic modulations, and a layered version of Bach's Sarabande and its Double from the lute suite, where both textures interact (from 1:46).</p>
-          <div class="video-grid">
-            <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/WFY744ehMjY" allowfullscreen loading="lazy" title="Elliott Carter – Figment V, tape version"></iframe></div>
-              <div class="video-caption">Elliott Carter — Figment V</div>
-            </div>
-            <div>
-              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/HjbJP3gmFMg" allowfullscreen loading="lazy" title="Bach – Sarabande & Double, layered tape version"></iframe></div>
-              <div class="video-caption">Bach — Sarabande &amp; Double BWV 1002</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="project reveal">
-          <h3 data-i18n="w2.h">Tom Cage</h3>
-          <p data-i18n="w2.p">A piece for tom, pedal and MIDI controller inspired by John Cage's ideas of indeterminacy and performer agency. The electronic system introduces controlled unpredictability, allowing the performer to influence the structure and evolution of the piece in real time.</p>
+          <h3 data-i18n="w1.h">Tom Cage</h3>
+          <p data-i18n="w1.p">A piece for tom, pedal and MIDI controller inspired by John Cage's ideas of indeterminacy and performer agency. The electronic system introduces controlled unpredictability, allowing the performer to influence the structure and evolution of the piece in real time.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/hVBeSFSkjwE" allowfullscreen loading="lazy" title="Tom Cage – Percussion and Live Electronics"></iframe></div>
         </div>
 
         <div class="project reveal">
-          <h3 data-i18n="w3.h">Manta</h3>
-          <p data-i18n="w3.p">For vibraphone and electronics, inspired by Stockhausen's <em>Mantra</em> and its use of ring modulation. The idea is translated to the vibraphone, exploring how modulation can transform the instrument's sound and harmonic character.</p>
+          <h3 data-i18n="w2.h">Manta</h3>
+          <p data-i18n="w2.p">For vibraphone and electronics, inspired by Stockhausen's <em>Mantra</em> and its use of ring modulation. The idea is translated to the vibraphone, exploring how modulation can transform the instrument's sound and harmonic character.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/155Bl-2jvdI" allowfullscreen loading="lazy" title="Manta – Vibraphone and Live Electronics"></iframe></div>
         </div>
 
         <div class="project reveal">
-          <h3 data-i18n="w4.h">Hybrid Percussion Set</h3>
-          <p data-i18n="w4.p">A hybrid setup combining percussion and live electronics — percussion instruments, MIDI controllers and custom Max for Live devices interacting through live processing in Ableton. It has become a central tool in my practice, used both for improvisation and across other projects, and I keep expanding it as I learn new tools.</p>
-          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/-wozCsaUd9M" allowfullscreen loading="lazy" title="Percussion and Live Electronics Improvisation"></iframe></div>
-        </div>
-
-        <div class="project reveal">
-          <h3 data-i18n="w5.h">Soundtrack for Experimental Film</h3>
-          <p data-i18n="w5.p">Original soundtrack for an experimental documentary by filmmaker Alma Tejada about a cave in La Rioja (Spain). The film explores the textures and atmosphere of the space, focusing on the relationship between landscape, geology and sound; the music was created to accompany its visual rhythm.</p>
+          <h3 data-i18n="w3.h">Early Experiments</h3>
+          <p data-i18n="w3.p">Coming from a classical percussion background, my first explorations with electronics emerged through tape in relation to existing repertoire: a fixed-media track for Elliott Carter's <em>Figment V</em> underlining its metric modulations, and another over the Sarabande and its Double from Bach's Partita No. 1 for solo violin, where the dance and its double sound at once and answer each other (from 1:46).</p>
+          <div class="video-grid">
+            <div>
+              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/WFY744ehMjY" allowfullscreen loading="lazy" title="Elliott Carter – Figment V, tape version"></iframe></div>
+              <div class="video-caption">Elliott Carter · Figment V</div>
+            </div>
+            <div>
+              <div class="video-wrap"><iframe src="https://www.youtube.com/embed/HjbJP3gmFMg" allowfullscreen loading="lazy" title="Bach – Sarabande & Double, layered tape version"></iframe></div>
+              <div class="video-caption">Bach · Sarabande &amp; Double BWV 1002</div>
+            </div>
+          </div>
         </div>
 
       </div>
+
+      <div class="section-label section-label--next" data-i18n="label.impro">Improvisation</div>
+      <div class="projects">
+        <div class="project reveal">
+          <h3 data-i18n="i1.h">Hybrid Percussion Set</h3>
+          <p data-i18n="i1.p">A hybrid setup combining percussion and live electronics: percussion instruments, MIDI controllers and custom Max for Live devices interacting through live processing in Ableton. It has become a central tool in my practice, used both for improvisation and across other projects, and I keep expanding it as I learn new tools.</p>
+          <div class="video-wrap"><iframe src="https://www.youtube.com/embed/-wozCsaUd9M" allowfullscreen loading="lazy" title="Percussion and Live Electronics Improvisation"></iframe></div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
   <!-- ── PROJECTS ── -->
   <div class="page" id="page-projects">
     <div class="content-section">
-      <div class="section-label" data-i18n="label.projects">Projects — Collaborations</div>
+      <div class="section-label" data-i18n="label.projects">Projects</div>
       <div class="projects">
 
         <div class="project reveal">
@@ -470,7 +536,7 @@
           <h3 data-i18n="p3.h">Duo with Tibor Kovács</h3>
           <p data-i18n="p3.p">A duo focused on free improvisation, working with my hybrid percussion and electronics setup and Tibor's modular synthesis system, generally moving towards slower, atmospheric and drone-oriented sound worlds. We also created <em>SoL</em>, a performance project combining sound, light and distorted visual imagery.</p>
           <div class="video-wrap"><iframe src="https://www.youtube.com/embed/H9Bu3Gw9veA" allowfullscreen loading="lazy" title="SoL Trailer"></iframe></div>
-          <div class="video-caption">SoL — trailer</div>
+          <div class="video-caption">SoL · trailer</div>
         </div>
 
       </div>
@@ -501,7 +567,7 @@
             <span class="agenda-monthyear" data-i18n="ag2.m">Aug 2026</span>
           </div>
           <div class="agenda-what">
-            <h3 data-i18n="ag2.h">John Cage — <em>Four⁴</em></h3>
+            <h3 data-i18n="ag2.h">John Cage · <em>Four⁴</em></h3>
             <div class="agenda-role" data-i18n="ag2.r">Percussion quartet · HKB coproduction</div>
             <div class="agenda-where">Les Jardins Musicaux, Antenne de Chasseral <span class="city">· Chasseral</span></div>
           </div>
@@ -533,7 +599,7 @@
         <div class="bio-body" id="bio-body">
 
           <div class="bio-short" data-i18n-html="bio.short">
-            <p>Álvaro Ayuso (Logroño, 2000) is a percussionist and sound artist based in Bern. His work starts from acoustic percussion and extends into live electronics and installation, combining digital tools, circuits and self-built devices as though they were a single instrument. He is drawn to sound at an almost physical level: how it is generated and what can be altered from within. Drawing on the memory and landscape of the rural surroundings he comes from, he builds his own programmes — writing the music and, at times, making the instruments — such as <em>Piñas, platos y patches</em> and <em>El silencio de Valvanera</em>.</p>
+            <p>Álvaro Ayuso (Logroño, 2000) is a percussionist and sound artist based in Bern. His work starts from acoustic percussion and extends into live electronics and installation, combining digital tools, circuits and self-built devices as though they were a single instrument. He is drawn to sound at an almost physical level: how it is generated and what can be altered from within. Drawing on the memory and landscape of the rural surroundings he comes from, he builds his own programmes, writing the music and, at times, making the instruments. <em>Piñas, platos y patches</em> and <em>El silencio de Valvanera</em> are two of them.</p>
             <p>He has worked with the group Frames Percussion and with composers including Magnus Lindberg, Matthew Shlomowitz and Gary Berger; he has premiered works by Altin Volaj, María Amor, Tibor Kovács and Yido Chae, and has taken part as a performer in two editions of the Joan Guinjoan International Composition Prize. His work has been presented at Festival Actual (Logroño), the Teatre Nacional de Catalunya (Barcelona), Les Jardins Musicaux (Cernier) and the Troubadour (London). His projects include the collective Páramo 26005, which he co-founded, the duo Marianito Rojo with trumpeter Carmen Llena, and a free improvisation duo with composer Tibor Kovács. Trained at ESMUC and at the Hochschule der Künste Bern, where he is pursuing a Master in Contemporary Arts Practice, he is a recipient of the Albert Hänggi Scholarship.</p>
           </div>
 
@@ -565,44 +631,52 @@
       <div class="section-label" data-i18n="label.video">Video</div>
       <div class="media-grid reveal">
           <div class="media-item">
+            <div class="lite" data-id="l7gCF2yeK_8" role="button" tabindex="0" aria-label="Play: Nicole Lizée, White Label Experiment"
+                 style="background-image:url('https://i.ytimg.com/vi/l7gCF2yeK_8/maxresdefault.jpg')">
+              <span class="play"></span>
+            </div>
+            <div class="media-title" data-i18n="m1.t">Nicole Lizée, White Label Experiment</div>
+            <div class="media-meta" data-i18n="m1.m">HKB Percussion, Bern</div>
+          </div>
+          <div class="media-item">
             <div class="lite" data-id="gWSaYeWoHqw" role="button" tabindex="0" aria-label="Play: Yido Chae, Possessed (and they came all at once)"
                  style="background-image:url('https://i.ytimg.com/vi/gWSaYeWoHqw/maxresdefault.jpg')">
               <span class="play"></span>
             </div>
-            <div class="media-title" data-i18n="m1.t">Yido Chae, Possessed (and they came all at once)</div>
-            <div class="media-meta" data-i18n="m1.m">Premiere · À suivre, Bern, 2026</div>
+            <div class="media-title" data-i18n="m2.t">Yido Chae, Possessed (and they came all at once)</div>
+            <div class="media-meta" data-i18n="m2.m">Premiere · À suivre, Bern, 2026</div>
           </div>
           <div class="media-item">
             <div class="lite" data-id="Eek16OJAyn4" data-start="522" role="button" tabindex="0" aria-label="Play: Joan Guinjoan International Composition Prize"
                  style="background-image:url('https://i.ytimg.com/vi/Eek16OJAyn4/maxresdefault.jpg')">
               <span class="play"></span>
             </div>
-            <div class="media-title" data-i18n="m2.t">Joan Guinjoan International Composition Prize</div>
-            <div class="media-meta" data-i18n="m2.m">As a performer with the ensemble</div>
+            <div class="media-title" data-i18n="m3.t">Joan Guinjoan International Composition Prize</div>
+            <div class="media-meta" data-i18n="m3.m">As a performer with the ensemble</div>
           </div>
           <div class="media-item">
             <div class="lite" data-id="5wlV4x4biBU" role="button" tabindex="0" aria-label="Play: Cort Lippe, Duo for Cajón and Computer"
                  style="background-image:url('https://i.ytimg.com/vi/5wlV4x4biBU/maxresdefault.jpg')">
               <span class="play"></span>
             </div>
-            <div class="media-title" data-i18n="m3.t">Cort Lippe, Duo for Cajón and Computer</div>
-            <div class="media-meta" data-i18n="m3.m">Percussion and live electronics</div>
+            <div class="media-title" data-i18n="m4.t">Cort Lippe, Duo for Cajón and Computer</div>
+            <div class="media-meta" data-i18n="m4.m">Percussion and live electronics</div>
           </div>
           <div class="media-item">
             <div class="lite" data-id="lN92e2GRi54" role="button" tabindex="0" aria-label="Play: Philippe Manoury, Le livre des claviers IV"
                  style="background-image:url('https://i.ytimg.com/vi/lN92e2GRi54/maxresdefault.jpg')">
               <span class="play"></span>
             </div>
-            <div class="media-title" data-i18n="m4.t">Philippe Manoury, Le livre des claviers IV</div>
-            <div class="media-meta" data-i18n="m4.m">Vibraphone</div>
+            <div class="media-title" data-i18n="m5.t">Philippe Manoury, Le livre des claviers IV</div>
+            <div class="media-meta" data-i18n="m5.m">Vibraphone</div>
           </div>
           <div class="media-item">
             <div class="lite" data-id="0mbYYtP2RNo" role="button" tabindex="0" aria-label="Play: Charles Wuorinen, Janissary Music I"
                  style="background-image:url('https://i.ytimg.com/vi/0mbYYtP2RNo/maxresdefault.jpg')">
               <span class="play"></span>
             </div>
-            <div class="media-title" data-i18n="m5.t">Charles Wuorinen, Janissary Music I</div>
-            <div class="media-meta" data-i18n="m5.m">Percussion solo</div>
+            <div class="media-title" data-i18n="m6.t">Charles Wuorinen, Janissary Music I</div>
+            <div class="media-meta" data-i18n="m6.m">Percussion solo</div>
           </div>
       </div>
 
@@ -650,8 +724,32 @@
       document.getElementById('page-' + id).classList.add('active');
       window.scrollTo({ top: 0 });
       navLinks.forEach(a => a.classList.toggle('current', a.dataset.page === id));
+      paginaActual = id;
+      ajustarScrim();
       initReveals();
     }
+
+    // ── Velo sobre el vídeo de fondo ──
+    // En la portada arranca claro (se ve el vídeo) y se va oscureciendo al bajar,
+    // para que la galería y el teaser se lean bien. En el resto de páginas,
+    // siempre oscuro: hay mucho texto.
+    const SCRIM_CLARO = 0.42, SCRIM_OSCURO = 0.72;
+    let paginaActual = 'home', tick = false;
+    function ajustarScrim() {
+      let v = SCRIM_OSCURO;
+      if (paginaActual === 'home') {
+        const recorrido = window.innerHeight * 0.7;
+        const t = Math.min(1, window.scrollY / recorrido);
+        v = SCRIM_CLARO + (SCRIM_OSCURO - SCRIM_CLARO) * t;
+      }
+      document.documentElement.style.setProperty('--scrim', v.toFixed(3));
+    }
+    window.addEventListener('scroll', () => {
+      if (tick) return;
+      tick = true;
+      requestAnimationFrame(() => { ajustarScrim(); tick = false; });
+    }, { passive: true });
+    ajustarScrim();
 
     navLinks.forEach(link => {
       link.addEventListener('click', e => {
@@ -697,11 +795,21 @@
       if (!v) return;
       const grande = window.matchMedia('(min-width: 901px)').matches;
       const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const ahorro = navigator.connection && navigator.connection.saveData;
-      if (grande && !quieto && !ahorro) {
-        v.src = v.dataset.src;
-        v.load();
-      }
+      const con = navigator.connection || {};
+      const ahorro = con.saveData;
+      // Conexión lenta declarada por el navegador: nos quedamos con el póster.
+      const lenta = /(^|-)2g$/.test(con.effectiveType || '');
+      if (quieto || ahorro || lenta) return;
+
+      // Escritorio: 7,9 MB. Móvil: la versión ligera de 1,2 MB.
+      const fuente = grande ? v.dataset.src : v.dataset.srcMovil;
+      if (!fuente) return;
+      const cargar = () => { v.src = fuente; v.load(); };
+      // En móvil el póster ya se ve; el vídeo entra después, sin competir
+      // con las fotos por el ancho de banda.
+      if (grande) cargar();
+      else if (document.readyState === 'complete') setTimeout(cargar, 600);
+      else window.addEventListener('load', () => setTimeout(cargar, 600));
     })();
 
     // ── Vídeo: cargar el iframe solo al hacer clic ──
@@ -738,52 +846,53 @@
   "nav.media": "Media",
   "nav.contact": "Contacto",
   "hero.role": "Percusión · Electrónica en vivo · Arte sonoro",
-  "label.work": "Obra — Composiciones",
-  "label.projects": "Proyectos — Colaboraciones",
+  "label.projects": "Proyectos",
   "label.agenda": "Agenda",
   "label.bio": "Bio",
   "label.video": "Vídeo",
   "label.press": "Prensa y descargas",
   "label.contact": "Contacto",
-  "w1.h": "Primeros experimentos",
-  "w1.p": "Viniendo de la percusión clásica, mis primeras exploraciones con la electrónica surgieron a través de la cinta en relación con el repertorio existente: una cinta para <em>Figment V</em> de Elliott Carter que refuerza sus modulaciones rítmicas, y una versión superpuesta de la Sarabanda y su Doble de la suite para laúd de Bach, donde ambas texturas interactúan (a partir del 1:46).",
-  "w2.h": "Tom Cage",
-  "w2.p": "Pieza para tom, pedal y controlador MIDI inspirada en las ideas de Cage sobre la indeterminación y la agencia del intérprete. El sistema electrónico introduce una imprevisibilidad controlada que permite influir en la estructura y la evolución de la pieza en tiempo real.",
-  "w3.h": "Manta",
-  "w3.p": "Para vibráfono y electrónica, inspirada en <em>Mantra</em> de Stockhausen y su uso de la modulación en anillo. La idea se traslada al vibráfono para explorar cómo la modulación transforma el sonido y el carácter armónico del instrumento.",
-  "w4.h": "Set híbrido de percusión",
-  "w4.p": "Un montaje híbrido que combina percusión y electrónica en vivo: instrumentos de percusión, controladores MIDI y dispositivos propios de Max for Live que interactúan mediante procesamiento en tiempo real dentro de Ableton. Se ha convertido en una herramienta central de mi práctica, tanto para improvisar como en otros proyectos, y sigo ampliándolo a medida que aprendo nuevas herramientas.",
-  "w5.h": "Banda sonora para cine experimental",
-  "w5.p": "Banda sonora original para un documental experimental de la cineasta Alma Tejada sobre una cueva de La Rioja. La película explora las texturas y la atmósfera del espacio, atendiendo a la relación entre paisaje, geología y sonido; la música se creó para acompañar su ritmo visual.",
+  "label.comp": "Composiciones",
+  "label.impro": "Improvisación",
+  "w1.h": "Tom Cage",
+  "w1.p": "Pieza para tom, pedal y controlador MIDI, a partir de las ideas de Cage sobre la indeterminación y el margen de decisión del intérprete. El sistema electrónico introduce una imprevisibilidad controlada: quien toca puede alterar la estructura y el rumbo de la pieza sobre la marcha.",
+  "w2.h": "Manta",
+  "w2.p": "Para vibráfono y electrónica en vivo, a partir de <em>Mantra</em> de Stockhausen, donde los dos pianos pasan por modulación en anillo. Traslado ese procedimiento al vibráfono: la modulación reordena su espectro y, con él, todo el color armónico del instrumento.",
+  "w3.h": "Primeros experimentos",
+  "w3.p": "Vengo de la percusión clásica, así que mis primeras pruebas con la electrónica fueron de soporte fijo, sobre repertorio que ya tocaba: una pista para <em>Figment V</em> de Elliott Carter que subraya sus modulaciones métricas, y otra sobre la Sarabanda y su Doble de la Partita n.º 1 para violín solo de Bach, donde la danza y su doble suenan a la vez y se responden (a partir del 1:46).",
+  "i1.h": "Set híbrido de percusión",
+  "i1.p": "El instrumento que me he construido: percusión, controladores MIDI y dispositivos que programo yo en Max for Live, con todo el procesado en directo dentro de Ableton. Es la herramienta central de mi trabajo, la que uso para improvisar y la que entra también en otros proyectos, y la sigo ampliando a medida que aprendo herramientas nuevas.",
   "p1.h": "Marianito Rojo",
-  "p1.p": "Dúo con la trompetista Carmen Llena centrado en la performance experimental y la improvisación. El proyecto se mueve entre el material compuesto y las formas abiertas, dejando que el sonido surja de la interacción y la escucha. Partiendo de la música contemporánea, la improvisación y el jazz, usamos electrónica en vivo para ampliar los instrumentos acústicos y transformarlos en tiempo real.",
+  "p1.p": "Dúo con la trompetista Carmen Llena, a caballo entre la performance experimental y la improvisación. Trabajamos con material escrito y con formas abiertas, y dejamos que el sonido salga de la interacción y de la escucha. Venimos de la música contemporánea, la improvisación y el jazz, y usamos electrónica en vivo para extender los instrumentos acústicos y transformarlos mientras suenan.",
   "p2.h": "Páramo 26005",
-  "p2.p": "Soy cofundador del colectivo de creación sonora Páramo 26005, junto a Adrián Fuentes y Juls Ruiz. Dentro del proyecto participo como músico y contribuyo al desarrollo compositivo de las piezas, además de a la concepción sonora de la obra y a la integración de la electrónica en vivo.",
+  "p2.p": "Colectivo de creación sonora que fundé junto a Adrián Fuentes y Juls Ruiz. Toco, participo en la escritura de las piezas y me ocupo de cómo suenan y de cómo entra en ellas la electrónica en vivo.",
   "p3.h": "Dúo con Tibor Kovács",
-  "p3.p": "Dúo centrado en la improvisación libre, con mi set híbrido de percusión y electrónica y el sistema de síntesis modular de Tibor, orientado en general hacia mundos sonoros lentos, atmosféricos y cercanos al drone. También creamos <em>SoL</em>, un proyecto de performance que combina sonido, luz e imagen distorsionada.",
+  "p3.p": "Dúo de improvisación libre: mi set híbrido de percusión y electrónica frente al sistema modular de Tibor. Solemos movernos hacia texturas lentas y atmosféricas, cerca del drone. De ahí salió también <em>SoL</em>, una performance de sonido, luz e imagen distorsionada.",
   "ag1.h": "Madame Bovary",
   "ag1.r": "Percusión",
-  "ag1.m": "Jul 2026",
-  "ag2.h": "John Cage — <em>Four⁴</em>",
+  "ag1.m": "jul 2026",
+  "ag2.h": "John Cage · <em>Four⁴</em>",
   "ag2.r": "Cuarteto de percusión · coproducción HKB",
-  "ag2.m": "Ago 2026",
+  "ag2.m": "ago 2026",
   "ag3.h": "El silencio de Valvanera",
   "ag3.r": "Beca Inicia",
-  "ag3.m": "Nov 2026",
+  "ag3.m": "nov 2026",
   "bio.more": "Leer la biografía completa",
-  "m1.t": "Yido Chae, Possessed (and they came all at once)",
-  "m1.m": "Estreno · À suivre, Berna, 2026",
-  "m2.t": "Premio Internacional de Composición Joan Guinjoan",
-  "m2.m": "Como intérprete del ensemble",
-  "m3.t": "Cort Lippe, Duo for Cajón and Computer",
-  "m3.m": "Percusión y electrónica en vivo",
-  "m4.t": "Philippe Manoury, Le livre des claviers IV",
-  "m4.m": "Vibráfono",
-  "m5.t": "Charles Wuorinen, Janissary Music I",
-  "m5.m": "Percusión sola",
+  "m1.t": "Nicole Lizée, White Label Experiment",
+  "m1.m": "HKB Percussion, Berna",
+  "m2.t": "Yido Chae, Possessed (and they came all at once)",
+  "m2.m": "Estreno · À suivre, Berna, 2026",
+  "m3.t": "Premio Internacional de Composición Joan Guinjoan",
+  "m3.m": "Como intérprete, con el ensemble",
+  "m4.t": "Cort Lippe, Duo for Cajón and Computer",
+  "m4.m": "Percusión y electrónica en vivo",
+  "m5.t": "Philippe Manoury, Le livre des claviers IV",
+  "m5.m": "Vibráfono",
+  "m6.t": "Charles Wuorinen, Janissary Music I",
+  "m6.m": "Percusión sola",
   "c1.k": "Entrevista",
   "c1.t": "Cadena SER",
-  "c1.m": "Radio · español",
+  "c1.m": "Radio · en español",
   "c2.k": "Press kit",
   "c2.t": "Fotos en alta resolución y biografía",
   "c2.m": "Google Drive",
@@ -831,6 +940,11 @@
           ? (abierta ? 'Ver la biografía corta' : 'Leer la biografía completa')
           : (abierta ? 'Show short biography' : 'Read full biography');
       }
+      // El título se queda igual en los dos idiomas: solo el nombre.
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', l === 'es'
+        ? 'Percusionista y artista sonoro afincado en Berna. Percusión acústica, electrónica en vivo e instrumentos de creación propia, en escena y en instalación.'
+        : 'Percussionist and sound artist based in Bern. Acoustic percussion, live electronics and self-built instruments, on stage and in installation.');
       document.querySelectorAll('[data-lang-opt]').forEach(sp =>
         sp.classList.toggle('on', sp.dataset.langOpt === l));
       try { localStorage.setItem('lang', l); } catch (e) {}

@@ -103,7 +103,11 @@ en tamaños pequeños. Una sola fuente para todo: el carácter viene de la escal
 ## 5. Layout y espacio
 
 - **El espacio negativo es el material principal.** Márgenes generosos, mucho aire entre secciones.
-- Contenedor de lectura estrecho (máx. ~720–820px) centrado; el hero y las rejillas pueden ir a ancho completo.
+- **Ocupar el ancho de la pantalla es la norma; la columna estrecha es la excepción.** El listado de
+  obras va a dos por fila hasta 1400px, y el hero y las rejillas a ancho completo. La medida corta
+  (~720–760px) se reserva para **texto seguido**: bio, contacto. En un portátil, dejar medio folio
+  vacío al lado del contenido se lee como página a medio hacer, no como respiración.
+  Regla de Álvaro, ago 2026 (sustituye a la anterior, que pedía contenedor estrecho por defecto).
 - **Asimetría intencionada** antes que rejillas centradas y perfectas: alinear a una columna, dejar respirar el resto.
 - Ritmo vertical amplio entre secciones (`clamp(5rem, 12vh, 9rem)`).
 - Sin tarjetas con sombra, sin bordes redondeados marcados, sin "cajas". Separadores = líneas finas `--hairline` o solo espacio.
