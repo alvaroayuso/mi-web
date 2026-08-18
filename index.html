@@ -51,8 +51,11 @@
     /* ── Nav ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: baseline;
       padding: 1.5rem 2rem; z-index: 100;
+      /* Tamaño base del menú = el del nombre. El selector de idioma se mide en
+         em sobre esto, así se mantiene siempre en proporción con "Álvaro Ayuso". */
+      font-size: 0.82rem;
     }
     /* Velo de arriba: con el vídeo más claro en la portada y las fotos pasando
        por debajo al bajar, el menú necesita algo que lo despegue del fondo. */
@@ -61,17 +64,15 @@
       background: linear-gradient(to bottom, rgba(11,11,11,0.78), rgba(11,11,11,0));
       z-index: -1; pointer-events: none;
     }
-    /* El nombre y el selector de idioma van juntos a la izquierda. El tamaño
-       base lo fija el contenedor y el selector se mide en em, así queda siempre
-       en proporción al nombre aunque este cambie de tamaño. */
-    .nav-left { display: flex; align-items: baseline; gap: 0.8rem; font-size: 0.82rem; }
     .nav-name {
       font-size: 1em; letter-spacing: 0.06em; font-weight: 400;
       text-decoration: none; color: var(--fg); opacity: 0.9;
       transition: opacity 0.3s ease;
     }
     .nav-name:hover { opacity: 1; }
-    .nav-links { display: flex; gap: 1.8rem; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    /* margin-left auto: el nombre queda a la izquierda y los enlaces y el
+       selector de idioma se van juntos al borde derecho. */
+    .nav-links { display: flex; gap: 1.8rem; margin-left: auto; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
     .nav-links a { color: var(--fg); text-decoration: none; opacity: 0.7; transition: opacity 0.3s ease; }
     .nav-links a:hover, .nav-links a.current { opacity: 1; }
 
@@ -231,7 +232,7 @@
       /* Un punto por debajo del nombre, no más: se nota que es secundario
          sin que parezca de otro tamaño. */
       font-size: 0.88em; letter-spacing: 0.08em; color: var(--fg);
-      padding: 0; display: inline-flex; gap: 0.3rem;
+      padding: 0; margin-left: 1.7rem; display: inline-flex; gap: 0.3rem;
     }
     .lang-switch span { opacity: 0.4; transition: opacity 0.3s ease; }
     .lang-switch .sep { opacity: 0.25; }
@@ -244,23 +245,31 @@
       background: #000 center/cover no-repeat; border: none; padding-top: 0;
       display: block; overflow: hidden; cursor: pointer;
     }
+    /* El fotograma se ve con su brillo real. Antes llevaba encima un 28% de
+       negro que apagaba todas las miniaturas. */
     .lite::after {
       content: ""; position: absolute; inset: 0;
-      background: rgba(0,0,0,0.28); transition: background 0.35s ease;
+      background: rgba(0,0,0,0); transition: background 0.35s ease;
     }
-    .lite:hover::after { background: rgba(0,0,0,0.10); }
+    /* Un punto más de luz mientras es solo miniatura. Al pulsar, el atributo
+       data-loaded aparece y el filtro se quita: el vídeo se ve sin retocar. */
+    .lite:not([data-loaded]) { filter: brightness(1.1); }
     .lite .play {
       position: absolute; z-index: 2; left: 50%; top: 50%;
       transform: translate(-50%,-50%);
       width: 74px; height: 74px; border-radius: 50%;
-      border: 1px solid rgba(236,233,225,0.55);
+      border: 1px solid rgba(236,233,225,0.7);
       display: flex; align-items: center; justify-content: center;
       transition: border-color 0.35s ease, transform 0.35s ease;
+      /* Sombra propia para que se siga viendo sobre fotogramas claros,
+         ahora que la imagen ya no va oscurecida. */
+      box-shadow: 0 2px 14px rgba(0,0,0,0.45);
     }
     .lite .play::before {
       content: ""; border-left: 13px solid var(--fg);
       border-top: 8px solid transparent; border-bottom: 8px solid transparent;
       margin-left: 4px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.55));
     }
     .lite:hover .play { border-color: var(--fg); transform: translate(-50%,-50%) scale(1.06); }
     .lite iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 3; }
@@ -337,17 +346,20 @@
 
     /* ── Mobile nav ── */
     @media (max-width: 600px) {
-      nav { flex-direction: column; align-items: flex-start; gap: 0.65rem; padding: 1rem 1.5rem; }
+      /* En vez de una columna, se deja envolver: así el nombre y el EN/ES
+         comparten la primera fila (uno a cada extremo) y los enlaces caen debajo. */
+      nav { flex-wrap: wrap; align-items: baseline; row-gap: 0.65rem; padding: 1rem 1.5rem; font-size: 0.78rem; }
       /* El menú ocupa tres filas en móvil y se comía el rótulo de cada sección:
          aquí se le da sitio por debajo. */
       .content-section { padding-top: 9.5rem; }
       /* El nombre es el enlace a la portada. Estaba oculto en móvil, así que
-         desde el móvil no había forma de volver al inicio. El selector de
-         idioma va en la misma fila y encoge con él. */
-      .nav-left { display: flex; font-size: 0.78rem; }
-      /* A 390px no caben los seis enlaces + EN/ES en una fila: se cortaba
-         "Contact" y el selector de idioma quedaba fuera de pantalla. */
-      .nav-links { gap: 1.1rem; row-gap: 0.55rem; font-size: 0.72rem; flex-wrap: wrap; }
+         desde el móvil no había forma de volver al inicio. */
+      .nav-name { order: 1; }
+      /* El selector se queda arriba a la derecha, en la fila del nombre. */
+      .lang-switch { order: 2; margin-left: auto; }
+      /* Ancho completo para forzar el salto: los enlaces ocupan las filas de
+         abajo. A 390px no caben los seis en una sola, así que envuelven. */
+      .nav-links { order: 3; width: 100%; margin-left: 0; gap: 1.1rem; row-gap: 0.55rem; font-size: 0.72rem; flex-wrap: wrap; }
     }
 
     @media (max-width: 900px) {
@@ -373,10 +385,7 @@
   <div class="bg-overlay"></div>
 
   <nav>
-    <div class="nav-left">
-      <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
-      <button class="lang-switch" id="lang-switch" type="button" aria-label="Cambiar idioma"><span data-lang-opt="en">EN</span><span class="sep">/</span><span data-lang-opt="es">ES</span></button>
-    </div>
+    <a class="nav-name" href="#" data-page="home">Álvaro Ayuso</a>
     <div class="nav-links">
       <a href="#" data-page="projects" data-i18n="nav.projects">Projects</a>
       <a href="#" data-page="work" data-i18n="nav.work">Work</a>
@@ -385,6 +394,7 @@
       <a href="#" data-page="media" data-i18n="nav.media">Media</a>
       <a href="#" data-page="contact" data-i18n="nav.contact">Contact</a>
     </div>
+    <button class="lang-switch" id="lang-switch" type="button" aria-label="Cambiar idioma"><span data-lang-opt="en">EN</span><span class="sep">/</span><span data-lang-opt="es">ES</span></button>
   </nav>
 
   <!-- ── HOME ── -->
