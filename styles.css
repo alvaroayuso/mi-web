@@ -1,0 +1,346 @@
+    :root {
+      --bg: #0B0B0B; --fg: #ECE9E1;
+      --fg-muted: rgba(236,233,225,0.92);
+      --fg-faint: rgba(236,233,225,0.68);
+      --hairline: rgba(236,233,225,0.14);
+      --font: "Hanken Grotesk", system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { background: transparent; color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    a { color: inherit; }
+
+
+    /* ── Background video (fixed, full page) ── */
+    .bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: opacity 0.8s ease; }
+    /* El velo sobre el vídeo. --scrim lo mueve el JS: más claro en la portada,
+       más oscuro en las páginas con texto. */
+    .bg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,var(--scrim, 0.72)); z-index: -1; transition: background 0.5s ease; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: baseline;
+      padding: 1.5rem 2rem; z-index: 100;
+      /* Tamaño base del menú = el del nombre. El selector de idioma se mide en
+         em sobre esto, así se mantiene siempre en proporción con "Álvaro Ayuso". */
+      font-size: 0.82rem;
+    }
+    /* Velo de arriba: con el vídeo más claro en la portada y las fotos pasando
+       por debajo al bajar, el menú necesita algo que lo despegue del fondo. */
+    nav::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: -2.5rem;
+      background: linear-gradient(to bottom, rgba(11,11,11,0.78), rgba(11,11,11,0));
+      z-index: -1; pointer-events: none;
+    }
+    .nav-name {
+      font-size: 1em; letter-spacing: 0.06em; font-weight: 400;
+      text-decoration: none; color: var(--fg); opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+    .nav-name:hover { opacity: 1; }
+    /* margin-left auto: el nombre queda a la izquierda y los enlaces y el
+       selector de idioma se van juntos al borde derecho. */
+    .nav-links { display: flex; gap: 1.8rem; margin-left: auto; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-links a { color: var(--fg); text-decoration: none; opacity: 0.7; transition: opacity 0.3s ease; }
+    .nav-links a:hover, .nav-links a.current { opacity: 1; }
+
+    /* ── Page system ── */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; animation: fadeIn 0.45s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 2rem;
+    }
+    .hero h1 { font-weight: 400; font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -0.02em; line-height: 1; }
+    .hero .role {
+      margin-top: 1.6rem; font-size: 0.88rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--fg); opacity: 0.88;
+    }
+
+    /* ── Gallery ── */
+    .gallery-sec { padding: clamp(1.8rem, 4vh, 2.8rem) 2rem clamp(4rem, 10vh, 7rem); }
+    .gallery { column-count: 3; column-gap: 1rem; }
+    @media (max-width: 900px) { .gallery { column-count: 2; } }
+    @media (max-width: 560px) { .gallery { column-count: 1; } }
+    .gallery figure { break-inside: avoid; margin: 0 0 1rem; position: relative; }
+    .gallery img { width: 100%; height: auto; display: block; }
+    .gallery figcaption {
+      font-size: 0.74rem; letter-spacing: 0.04em; line-height: 1.45;
+      color: var(--fg-faint); margin-top: 0.55rem;
+    }
+    /* En escritorio (con ratón) el pie se superpone y solo aparece al pasar el cursor */
+    @media (hover: hover) and (pointer: fine) {
+      .gallery figcaption {
+        position: absolute; left: 0; right: 0; bottom: 0; margin: 0;
+        padding: 2.4rem 1rem 0.9rem;
+        color: var(--fg);
+        background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0));
+        opacity: 0; transition: opacity 0.35s ease;
+      }
+      .gallery figure.has-caption:hover figcaption { opacity: 1; }
+    }
+
+    /* ── Sections ── */
+    .content-section { padding: clamp(5rem, 12vh, 9rem) 2rem; }
+    .section-label {
+      font-weight: 300; font-size: clamp(1.9rem, 3.2vw, 2.8rem); letter-spacing: -0.02em;
+      line-height: 1.1; color: var(--fg);
+      margin-bottom: 2.5rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--hairline);
+      max-width: 1400px;
+    }
+
+    /* ── Projects ── */
+    .projects {
+      max-width: 1400px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* row-gap 0 a propósito: con subgrid, el hueco entre filas se metería
+         también entre el título y su texto. La separación entre obras la pone
+         el padding-bottom de cada .project. */
+      column-gap: 3rem; row-gap: 0; align-items: start;
+    }
+    /* Cada obra comparte las filas de la rejilla madre (subgrid), así el vídeo
+       arranca a la misma altura en las dos columnas aunque un texto tenga una
+       línea más que el otro. Fila 1 título, 2 texto, 3 vídeo, 4 lo que sobre. */
+    .project { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; padding-bottom: 3.5rem; }
+    /* Si un bloque tiene una sola obra, ocupa las dos columnas: el texto a la
+       izquierda y el vídeo a la derecha, en vez de dejar medio folio vacío. */
+    .projects > .project:only-child {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* La tercera fila, vacía en la columna del texto, se come el alto sobrante
+         del vídeo. Sin ella, el vídeo estira las filas y separa título y párrafo. */
+      grid-template-rows: auto auto 1fr;
+      column-gap: 3rem; align-content: start;
+    }
+    .projects > .project:only-child > h3         { grid-column: 1; grid-row: 1; }
+    .projects > .project:only-child > p          { grid-column: 1; grid-row: 2; margin-bottom: 0; }
+    .projects > .project:only-child > .video-wrap,
+    .projects > .project:only-child > .video-grid { grid-column: 2; grid-row: 1 / span 3; margin-bottom: 0; }
+    .project h3 { font-weight: 400; font-size: 1.25rem; letter-spacing: -0.01em; margin-bottom: 0.7rem; color: var(--fg); }
+    .project p { color: var(--fg-muted); margin-bottom: 1.3rem; }
+    @media (max-width: 860px) {
+      .projects { grid-template-columns: 1fr; }
+      .project { padding-bottom: 3rem; }
+      .projects > .project:only-child { display: block; }
+      .projects > .project:only-child > p { margin-bottom: 1.3rem; }
+    }
+
+    /* ── Buttons & video ── */
+    .watch {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--fg-muted); text-decoration: none;
+      border: 1px solid var(--hairline); padding: 0.6rem 1rem; margin-right: 0.6rem;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    .watch:hover { color: var(--fg); border-color: var(--fg-muted); }
+    .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 1rem; }
+    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 600px) { .video-grid { grid-template-columns: 1fr; } }
+    .video-caption { font-size: 0.82rem; color: var(--fg-faint); letter-spacing: 0.04em; margin-top: 0.4rem; margin-bottom: 1rem; }
+
+    /* ── Text blocks ── */
+    .text-block { max-width: 760px; }
+    .text-block p { color: var(--fg-muted); margin-bottom: 1.2rem; }
+    .contact a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--fg-faint); }
+    .contact .links { margin-top: 1.5rem; font-size: 0.82rem; letter-spacing: 0.04em; }
+    .contact .links a { display: inline-block; margin-right: 1.5rem; color: var(--fg-muted); border: none; text-transform: uppercase; }
+    .contact .links a:hover { color: var(--fg); }
+
+    footer { padding: 3rem 2rem; font-size: 0.78rem; color: var(--fg-faint); border-top: 1px solid var(--hairline); }
+
+    /* ── Scroll reveal (within pages) ── */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Agenda ── */
+    .agenda-block { max-width: 820px; }
+    .agenda-entry {
+      display: grid; grid-template-columns: 6.5rem 1fr;
+      gap: 0 2.5rem; padding: 2.6rem 0;
+      border-top: 1px solid var(--hairline);
+      align-items: baseline;
+      transition: opacity 0.4s ease;
+    }
+    .agenda-entry:last-child { border-bottom: 1px solid var(--hairline); }
+    /* fecha: día grande, mes/año debajo */
+    .agenda-when { text-align: left; }
+    .agenda-day {
+      font-size: 2.7rem; font-weight: 300; line-height: 0.95;
+      letter-spacing: -0.03em; color: var(--fg);
+    }
+    .agenda-monthyear {
+      display: block; margin-top: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--fg-faint);
+    }
+    .agenda-what h3 {
+      font-size: 1.6rem; font-weight: 400; letter-spacing: -0.01em;
+      color: var(--fg); line-height: 1.15; margin-bottom: 0.7rem;
+    }
+    .agenda-role {
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--fg-faint); margin-bottom: 0.9rem;
+    }
+    .agenda-where { font-size: 0.95rem; color: var(--fg-muted); line-height: 1.5; }
+    .agenda-where .city { color: var(--fg-faint); }
+    @media (max-width: 560px) {
+      .agenda-entry { grid-template-columns: 1fr; gap: 1rem; padding: 2rem 0; }
+      .agenda-day { font-size: 2.2rem; }
+      .agenda-what h3 { font-size: 1.35rem; }
+    }
+
+    /* ── Selector de idioma ── */
+    .lang-switch {
+      background: none; border: none; font-family: inherit;
+      /* Un punto por debajo del nombre, no más: se nota que es secundario
+         sin que parezca de otro tamaño. */
+      font-size: 0.88em; letter-spacing: 0.08em; color: var(--fg);
+      padding: 0; margin-left: 1.7rem; display: inline-flex; gap: 0.3rem;
+    }
+    .lang-switch span { opacity: 0.4; transition: opacity 0.3s ease; }
+    .lang-switch .sep { opacity: 0.25; }
+    .lang-switch span[data-lang-opt].on { opacity: 1; }
+    .lang-switch:hover span[data-lang-opt]:not(.on) { opacity: 0.7; }
+
+    /* ── Vídeo con carga diferida (lite embed) ── */
+    .lite {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+      background: #000 center/cover no-repeat; border: none; padding-top: 0;
+      display: block; overflow: hidden; cursor: pointer;
+    }
+    /* El fotograma se ve con su brillo real. Antes llevaba encima un 28% de
+       negro que apagaba todas las miniaturas. */
+    .lite::after {
+      content: ""; position: absolute; inset: 0;
+      background: rgba(0,0,0,0); transition: background 0.35s ease;
+    }
+    /* Un punto más de luz mientras es solo miniatura. Al pulsar, el atributo
+       data-loaded aparece y el filtro se quita: el vídeo se ve sin retocar. */
+    .lite:not([data-loaded]) { filter: brightness(1.1); }
+    .lite .play {
+      position: absolute; z-index: 2; left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      width: 74px; height: 74px; border-radius: 50%;
+      border: 1px solid rgba(236,233,225,0.7);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.35s ease, transform 0.35s ease;
+      /* Sombra propia para que se siga viendo sobre fotogramas claros,
+         ahora que la imagen ya no va oscurecida. */
+      box-shadow: 0 2px 14px rgba(0,0,0,0.45);
+    }
+    .lite .play::before {
+      content: ""; border-left: 13px solid var(--fg);
+      border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+      margin-left: 4px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.55));
+    }
+    .lite:hover .play { border-color: var(--fg); transform: translate(-50%,-50%) scale(1.06); }
+    .lite iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 3; }
+    /* En Obra y Proyectos el lite va dentro de .video-wrap, que ya pone el 16:9:
+       aquí solo tiene que rellenarlo, sin volver a calcular la proporción. */
+    .video-wrap .lite { position: absolute; inset: 0; width: 100%; height: 100%; padding-bottom: 0; }
+
+    /* ── Hero teaser ── */
+    .teaser-sec { padding: clamp(4rem, 11vh, 7rem) 2rem 0; }
+    .hero-teaser { max-width: 1180px; margin: 0 auto; }
+
+    /* ── Media ── */
+    .section-label--next { margin-top: clamp(4rem, 9vh, 6.5rem); }
+    .media-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2.2rem 1.6rem;
+    }
+    @media (max-width: 980px) { .media-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px)  { .media-grid { grid-template-columns: 1fr; } }
+    .media-item .media-title { margin-top: 0.75rem; color: var(--fg-muted); font-size: 0.9rem; line-height: 1.4; }
+    .media-item .media-meta { color: var(--fg-faint); font-size: 0.74rem; letter-spacing: 0.04em; margin-top: 0.25rem; }
+    .media-grid .lite .play { width: 52px; height: 52px; }
+    .media-grid .lite .play::before { border-left-width: 10px; border-top-width: 6px; border-bottom-width: 6px; }
+
+    /* ── Fichas (prensa y descargas) ── */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem; max-width: 820px;
+    }
+    @media (max-width: 620px) { .card-grid { grid-template-columns: 1fr; } }
+    .card {
+      display: flex; flex-direction: column; justify-content: flex-end;
+      min-height: 165px; padding: 1.4rem;
+      border: 1px solid var(--hairline); text-decoration: none;
+      background: rgba(236,233,225,0.05);
+      backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      transition: border-color 0.35s ease, background 0.35s ease;
+    }
+    .card:hover { border-color: var(--fg-muted); background: rgba(236,233,225,0.09); }
+    .card-kind {
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--fg-faint); margin-bottom: auto;
+    }
+    .card-title { color: var(--fg); font-size: 1.05rem; line-height: 1.3; }
+    .card-meta { color: var(--fg-faint); font-size: 0.74rem; letter-spacing: 0.04em; margin-top: 0.4rem; }
+
+    /* ── Bio ── */
+    .bio-layout {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
+      gap: clamp(2rem, 5vw, 4.5rem); align-items: start;
+    }
+    .bio-photo img { width: 100%; height: auto; display: block; }
+    .bio-photo figcaption {
+      margin-top: 0.7rem; font-size: 0.7rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--fg-faint);
+    }
+    .bio-body p { color: var(--fg-muted); margin-bottom: 1.2rem; }
+    .bio-body .bio-long { display: none; }
+    .bio-body.long-open .bio-long { display: block; }
+    .bio-body.long-open .bio-short { display: none; }
+    .bio-toggle {
+      display: block; width: 100%; text-align: left;
+      background: none; border: none; border-top: 1px solid var(--hairline);
+      font-family: inherit; font-size: 0.78rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--fg-faint);
+      padding: 1rem 0 0; margin-top: 1.4rem;
+      transition: color 0.3s ease;
+    }
+    .bio-toggle:hover { color: var(--fg); }
+    @media (max-width: 760px) {
+      .bio-layout { grid-template-columns: 1fr; }
+      .bio-photo { max-width: 300px; order: -1; }
+    }
+
+    /* ── Mobile nav ── */
+    @media (max-width: 600px) {
+      /* En vez de una columna, se deja envolver: así el nombre y el EN/ES
+         comparten la primera fila (uno a cada extremo) y los enlaces caen debajo. */
+      nav { flex-wrap: wrap; align-items: baseline; row-gap: 0.65rem; padding: 1rem 1.5rem; font-size: 0.78rem; }
+      /* El menú ocupa tres filas en móvil y se comía el rótulo de cada sección:
+         aquí se le da sitio por debajo. */
+      .content-section { padding-top: 9.5rem; }
+      /* El nombre es el enlace a la portada. Estaba oculto en móvil, así que
+         desde el móvil no había forma de volver al inicio. */
+      .nav-name { order: 1; }
+      /* El selector se queda arriba a la derecha, en la fila del nombre. */
+      .lang-switch { order: 2; margin-left: auto; }
+      /* Ancho completo para forzar el salto: los enlaces ocupan las filas de
+         abajo. A 390px no caben los seis en una sola, así que envuelven. */
+      .nav-links { order: 3; width: 100%; margin-left: 0; gap: 1.1rem; row-gap: 0.55rem; font-size: 0.72rem; flex-wrap: wrap; }
+    }
+
+    @media (max-width: 900px) {
+      /* Se separa el teaser del nombre por arriba y de la galería por abajo:
+         en pantalla estrecha iban demasiado seguidos. */
+      .teaser-sec  { padding-top: clamp(3rem, 9vh, 5rem); padding-bottom: clamp(3.5rem, 10vh, 5.5rem); }
+      .gallery-sec { padding-top: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .bg-video { display: none; }
+      .page.active { animation: none; }
+    }
